@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "sql-map-2.dtd">
+
+<sqlMap namespace="Client">
+
+    <select id="getClientById" parameterClass="java.lang.String" resultClass="com.archermind.txtbl.domain.Client">
+        select id, name, feature_id, login_id, encoding, api_type from client where id=#id#
+    </select>
+
+</sqlMap>

@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "sql-map-2.dtd">
+
+<sqlMap namespace="Device">
+
+    <cacheModel id="DevicegetDeviceByidId-cache-LRU" type="LRU">
+        <flushInterval minutes="30"/>
+        <flushOnExecute statement="Device.getDeviceByid"/>
+        <property name="size" value="1000"/>
+    </cacheModel>
+
+    <insert id="addDevice" parameterClass="com.archermind.txtbl.domain.Device">
+        INSERT INTO `txtbl_device`
+        (`user_id`,`device_code`,`model`,`sim_code`,`capability`,`comment`,state,operate_time,clientsw,lacid,cellid,pin,pp_flag,imsi,msisdn)
+        VALUES
+        (#user_id#,#deviceCode#,#model#,#sim_code#,#capability#,#comment#,#state#,now(),#clientsw#,#lacid#,#cellid#,#pin#,#pp_flag#,#imsi#,#msisdn#)
+    </insert>
+
+    <select id="getCode" parameterClass="java.util.HashMap" resultClass="java.lang.String">
+        <![CDATA[
+        select 
+          device_code as deviceCode 
+        from txtbl_device  
+        where 
+          user_id = #user_id#
+      ]]>
+    </select>
+
+    <select id="getDeviceByUserid" parameterClass="java.lang.String" resultClass="com.archermind.txtbl.domain.Device">
+        select user_id, device_code as deviceCode, model, sim_code,capability,clientsw,lacid,cellid,pin from
+        txtbl_device where user_id=#id# and state='1'
+    </select>
+
+    <select id="getUserIdByDeviceCode" parameterClass="java.util.HashMap" resultClass="java.lang.String">
+        select user_id as value from txtbl_device where device_code = #deviceCode#
+    </select>
+
+    <select id="getUserId" parameterClass="com.archermind.txtbl.domain.Device" resultClass="java.lang.String">
+        select user_id from txtbl_device where device_code = #deviceCode# and sim_code = #Sim_code#
+    </select>
+
+
+    <select id="getDeviceByid" parameterClass="java.lang.String" resultClass="com.archermind.txtbl.domain.Device"
+            cacheModel="DevicegetDeviceByidId-cache-LRU">
+        select user_id, device_code as deviceCode, model,sim_code,capability,clientsw,lacid,cellid,pin from txtbl_device
+        where user_id=#id# and state='1'
+    </select>
+
+    <update id="modifyDevice" parameterClass="com.archermind.txtbl.domain.Device">
+        <![CDATA[
+        update txtbl_device
+        set 
+          user_id = #user_id# ,
+          device_code=#deviceCode#,
+          model=#model#,
+          clientsw = #clientsw#,
+          lacid = #lacid#,
+          cellid = #cellid#,
+          pin = #pin#,
+          sim_code=#sim_code#,
+          capability=#capability#
+        where 
+          device_code = #deviceCode#
+      ]]>
+    </update>
+
+    <update id="modifyIdDevices" parameterClass="com.archermind.txtbl.domain.Device">
+        update txtbl_device set state='0' where state='1' and id=#id#
+    </update>
+
+    <select id="selectDevices" parameterClass="java.lang.String" resultClass="com.archermind.txtbl.domain.Device">
+
+        select id,user_id, device_code as deviceCode, model,sim_code,capability,operate_time,clientsw,lacid,cellid,pin
+        from txtbl_device where state='1'
+        and user_id=#user_id#
+
+    </select>
+
+    <select id="getDeviceByIDvcIDSim" parameterClass="java.util.HashMap"
+            resultClass="com.archermind.txtbl.domain.Device">
+        select user_id, device_code as deviceCode, model,sim_code,capability,operate_time,clientsw,lacid,cellid,pin from
+        txtbl_device
+        where state='1'
+        <isNotNull prepend="and" property="simcode">
+            <![CDATA[sim_code = #simcode#]]>
+        </isNotNull>
+        <isNotNull prepend="and" property="devicecode">
+            device_code = #devicecode#
+        </isNotNull>
+
+    </select>
+
+    <update id="modifyDevicePin" parameterClass="java.util.HashMap">
+        update txtbl_device
+        set pin = #pin# ,
+        operate_time = now()
+        where state='1'
+        and user_id =#user_id#
+    </update>
+
+</sqlMap>

@@ -1,0 +1,26 @@
+<Security xmlns="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd">
+    <wsu:Timestamp
+            wsu:Id="Timestamp" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd">
+        <wsu:Created>{createdTime}</wsu:Created>
+    </wsu:Timestamp>
+    <wsse:BinarySecurityToken wsu:Id="token"
+                              wsse:ValueType="http://docs.oasis-open.org/wss/2004/XX/oasis-2004XX-wss-saml-token-profile-1.0#SAMLAssertionID"
+                              wsse:EncodingType="#Base64Binary"
+                              xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd"
+                              xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd">
+        {securityid}
+    </wsse:BinarySecurityToken>
+</Security>
+<Billing	xmlns="http://schemas.xmlsoap.org/ws/2005/08/billing">
+    <OperatorID xmlns="http://schemas.xmlsoap.org/ws/2005/08/billing">435</OperatorID>
+    <GatewayID xmlns="http://schemas.xmlsoap.org/ws/2005/08/billing">177</GatewayID>
+    <OperatorCustomerRef  xmlns="http://schemas.xmlsoap.org/ws/2005/08/billing">OperatorCustomerRef </OperatorCustomerRef>
+    <TransactionID  xmlns="http://schemas.xmlsoap.org/ws/2005/08/billing">2bab9bc5-30ac-4103-8523-80f445024089</TransactionID>
+    <TransactionStart xmlns="http://schemas.xmlsoap.org/ws/2005/08/billing">
+        {createdTime}
+    </TransactionStart>
+    <TransactionFinish xmlns="http://schemas.xmlsoap.org/ws/2005/08/billing">
+        0001-01-01T00:00:00.0000000Z
+    </TransactionFinish>
+    <ServiceActions xmlns="http://schemas.xmlsoap.org/ws/2005/08/billing" />
+</Billing> 

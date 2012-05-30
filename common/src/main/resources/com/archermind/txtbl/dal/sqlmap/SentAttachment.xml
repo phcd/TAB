@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "sql-map-2.dtd">
+
+<sqlMap namespace="SentAttachment">
+<typeAlias alias="attachment" type="com.archermind.txtbl.domain.Attachment"/>
+	
+	<!--add by andy liu start -->
+	<insert id="addAttachment" parameterClass="attachment">
+		<![CDATA[insert into txtbl_sent_attachment(email_id,size,name,`comment`)
+           values(
+            #emailId#,
+            #size#,
+            #name#,
+            #comment#
+            )]]>
+        <selectKey keyProperty="id" resultClass="int">
+            select last_insert_id()
+        </selectKey>
+	</insert>
+	
+	<!-- add by andy liu 2008-02-18 -->
+	<select id="getAttachment" parameterClass="java.util.HashMap" resultClass="attachment">
+	 
+	   select email_id as email_id,
+	          size as size,
+	          name as name,
+	          `data` as data,
+	          `comment` as comment
+	   from txtbl_sent_attachment
+	   
+	   <dynamic prepend="where">
+	   <isNotNull property="emailid">
+	         email_id = #emailid#
+	   </isNotNull>
+	   </dynamic>
+	 
+	 </select>
+	
+    <!--add by andy liu end -->
+</sqlMap>

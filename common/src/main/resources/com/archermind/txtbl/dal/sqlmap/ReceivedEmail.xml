@@ -1,0 +1,328 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "sql-map-2.dtd">
+
+<sqlMap namespace="ReceivedEmail">
+    <typeAlias alias="head" type="com.archermind.txtbl.domain.Email"/>
+
+    <select id="getReceivedEmailReceivedDate" parameterClass="java.util.HashMap" resultClass="java.sql.Timestamp">
+        select received_time from txtbl_email_received where id=#mailid#
+    </select>
+
+    <insert id="addEmail" parameterClass="head">
+        insert into
+        txtbl_email_received(user_id,`from`,from_alias,`to`,cc,reply,subject,body_size,commnet,maildate,status,received_time,original_account,message_type,messageId)
+        values(
+        #userId#,
+        #from#,
+        #from_alias#,
+        #to#,
+        #cc#,
+        #reply#,
+        #subject#,
+        #bodySize#,
+        #comment#,
+        nullif(#maildate#, ''),
+        #status#,
+        now(),
+        #original_account#,
+        #message_type#,
+        #messageId#
+        )
+        <selectKey keyProperty="id" resultClass="int">
+            select last_insert_id()
+        </selectKey>
+    </insert>
+
+    <select id="getNewEmail" parameterClass="java.util.HashMap" resultClass="head">
+        <![CDATA[select id as mailid,
+	           user_id as userId,
+	           `from` as `from`,
+	           from_alias,
+	           `to` as `to`,
+	           cc as cc,
+	           reply as reply,
+	           subject as subject,
+	           body_size as bodySize,
+	           commnet as comment,
+	           maildate as maildate,
+	           status as status,
+	           received_time as receivedTime,message_type,original_account,messageId
+	        from txtbl_email_received]]>
+
+        <dynamic prepend="where">
+            <isNotNull prepend="and" property="mailid">
+                id=#mailid#
+            </isNotNull>
+
+            <isNotNull prepend="and" property="userId">
+                user_id=#userId#
+            </isNotNull>
+
+            <isNotNull prepend="and" property="original_account">
+                original_account=#original_account#
+            </isNotNull>
+
+            <isNotNull prepend="and" property="status">
+                status = #status#
+            </isNotNull>
+        </dynamic>
+
+        order by maildate asc, received_time asc
+
+        <dynamic>
+            <isNotNull property="limit">
+                limit #limit#
+            </isNotNull>
+        </dynamic>
+
+    </select>
+
+    <select id="getEmailCount" parameterClass="java.util.HashMap" resultClass="java.lang.Integer">
+        <![CDATA[ select count(*) from txtbl_email_received where  id=#id# and original_account=#original_account# ]]>
+    </select>
+
+    <select id="getEmailCountByUserId" parameterClass="java.util.HashMap" resultClass="java.lang.Integer">
+        <![CDATA[ select count(*) from txtbl_email_received where  id=#id# and user_id=#userId# ]]>
+    </select>
+
+    <update id="modifyUuidStatus" parameterClass="java.util.HashMap">
+        update txtbl_email_received
+        set status=#newStatus#,
+        modify_time = now()
+        where user_id = #uuid#
+        and status = #oldStatus#
+    </update>
+
+    <update id="modifyStatusByUUIDandEmailID" parameterClass="java.util.HashMap">
+        update txtbl_email_received
+        set status=#newStatus#,
+        modify_time = now()
+        where user_id = #uuid#
+        and id = #emailid#
+    </update>
+
+    <update id="updateStatusBulk" parameterClass="java.util.HashMap">
+        update txtbl_email_received
+        set status=#status#,modify_time=now()
+        <dynamic prepend="where">
+            <isNotNull property="mailids">
+                id in (
+                <iterate property="mailids" conjunction=",  ">#mailids[]#</iterate>
+                )
+            </isNotNull>
+        </dynamic>
+    </update>
+
+    <insert id="saveOriginalEmail" parameterClass="com.archermind.txtbl.domain.OriginalReceivedEmail">
+        insert into txtbl_original_mail
+        (`id`, `user_id`, `email_from`, `email_to`, `reply`, `cc`, `subject`, `mail_time`,
+        `body`,original_account,mail_type)
+        values
+        (#id#,#userId#,#emailFrom#,#emailTo#,#reply#,#cc#,#subject#,#mailTime#,#body#,#original_account#,#mail_type#)
+    </insert>
+
+    <!--
+       <insert id="saveOriginalAttachment" parameterClass="com.archermind.txtbl.domain.OriginalReceivedAttachment">
+           insert into txtbl_original_attachment
+               (`email_id`, `name`, `data`)
+           values
+               (#emailId#,#name#,#data#)
+       </insert>
+    -->
+
+    <insert id="saveOriginalAttachment" parameterClass="com.archermind.txtbl.domain.OriginalReceivedAttachment">
+        insert into txtbl_original_attachment
+        (`email_id`, `name`, `size`)
+        values
+        (#emailId#, #name#, #size#)
+        <selectKey keyProperty="id" resultClass="int">
+            select last_insert_id()
+        </selectKey>
+    </insert>
+
+    <update id="updateAttachmentLocation" parameterClass="com.archermind.txtbl.domain.OriginalReceivedAttachment">
+        update txtbl_original_attachment
+        set location = #location#,
+        saved_on_date = #savedOnDate#
+        where id = #id#
+    </update>
+
+    <update id="updateProcessedOnDate" parameterClass="java.util.HashMap">
+        update txtbl_original_attachment
+        set processed_on_date = #processedOnDate#
+        where id = #id#
+    </update>
+
+    <select id="selectOriginalAttachmentDate" parameterClass="java.lang.String"
+            resultClass="com.archermind.txtbl.domain.Email">
+        <![CDATA[  select id as mailid from txtbl_email_received    where  received_time < #date# order by id desc limit 0,1  ]]>
+    </select>
+
+    <select id="selectReceivedAttachmentDate" parameterClass="java.lang.String"
+            resultClass="com.archermind.txtbl.domain.Email">
+        <![CDATA[  select id as mailid from txtbl_email_received    where  received_time < #date# order by id desc limit 0,1 ]]>
+    </select>
+
+    <select id="selectReceivedAttachmentMinDate" parameterClass="java.lang.String"
+            resultClass="com.archermind.txtbl.domain.Email">
+        <![CDATA[  select id from txtbl_received_attachment  where email_id <= #emailid# order by id asc limit 0,1 ]]>
+    </select>
+    <select id="selectReceivedAttachmentMaxDate" parameterClass="java.lang.String"
+            resultClass="com.archermind.txtbl.domain.Email">
+        <![CDATA[  select id from txtbl_received_attachment  where email_id <= #emailid# order by id desc limit 0,1 ]]>
+    </select>
+    <select id="selectOriginalAttachmentMinDate" parameterClass="java.lang.String"
+            resultClass="com.archermind.txtbl.domain.Email">
+        <![CDATA[  select id from txtbl_original_attachment  where email_id <= #emailid# order by id asc limit 0,1 ]]>
+    </select>
+
+    <select id="selectOriginalAttachmentMaxDate" parameterClass="java.lang.String"
+            resultClass="com.archermind.txtbl.domain.Email">
+        <![CDATA[  select id from txtbl_original_attachment  where email_id <= #emailid# order by id desc limit 0,1 ]]>
+    </select>
+
+    <select id="selectReceivedEmailDate" parameterClass="java.lang.String"
+            resultClass="com.archermind.txtbl.domain.Email">
+        <![CDATA[  select id as mailid from txtbl_email_received  where  received_time < #date# ]]>
+    </select>
+
+    <delete id="deleteOriginalAttachment" parameterClass="java.lang.String">
+        <![CDATA[ delete from  txtbl_original_attachment where id <= #id#  ]]>
+    </delete>
+
+    <select id="getReceivedEmail" parameterClass="java.util.HashMap" resultClass="com.archermind.txtbl.domain.Email">
+        select id as mailid,
+        user_id as userId,
+        `from` as `from`,
+        from_alias,
+        `to` as `to`,
+        cc as cc,
+        reply as reply,
+        subject as subject,
+        body_size as bodySize,
+        commnet as comment,
+        maildate as maildate,
+        status as status, messageId
+        from txtbl_email_received
+        where user_id=#uuid#
+        and id=#mailid#
+
+    </select>
+
+    <select id="getReceivedEmailByMessageId" parameterClass="java.util.HashMap"
+            resultClass="com.archermind.txtbl.domain.Email">
+        select id as mailid,
+        user_id as userId,
+        `from` as `from`,
+        from_alias,
+        `to` as `to`,
+        cc as cc,
+        reply as reply,
+        subject as subject,
+        body_size as bodySize,
+        commnet as comment,
+        maildate as maildate,
+        status as status,
+        messageId
+        from txtbl_email_received
+        where user_id=#uuid#
+        and messageId=#messageId#
+    </select>
+
+    <select id="getIMAPDirtyEmails" parameterClass="java.util.HashMap" resultClass="com.archermind.txtbl.domain.Email">
+        select id as mailid,
+        user_id as userId,
+        `from` as `from`,
+        from_alias,
+        `to` as `to`,
+        cc as cc,
+        reply as reply,
+        subject as subject,
+        body_size as bodySize,
+        commnet as comment,
+        maildate as maildate,
+        status as status, messageId,
+        imap_status as imap_status
+        from txtbl_email_received
+        where user_id=#uuid#
+        and imap_status >= 32
+    </select>
+
+    <!--         for all x undelivered mails with status old_status,
+                 if x > "cutoff", mark the oldest x - cutoff as new_status)  "-->
+    <update id="updateOldestMailsAfterCutoffHavingStatus" parameterClass="java.util.HashMap">
+        update txtbl_email_received as b
+        inner join (
+            select id from txtbl_email_received
+            where user_id = #uuid#
+            and status = #old_status#
+            order by received_time desc limit 18446744073709551615 offset #cutoff#
+        ) as a
+        on b.id = a.id
+        set status = #new_status#;
+    </update>
+
+    <update id="updateImapStatus" parameterClass="java.util.HashMap">
+        update txtbl_email_received
+        set imap_status = #imapStatus#     <!--  Should I also update the modify_time flag? -->
+        where user_id = #userId# AND messageId = #messageId#
+    </update>
+
+    <update id="updateImapStatusBulk" parameterClass="java.util.HashMap">
+        update txtbl_email_received
+        set imap_status=#imapStatus#,modify_time=now()      <!--  Should I also update the modify_time flag? -->
+        <dynamic prepend="where">
+            <isNotNull property="mailids">
+                user_id = #user_Id# AND messageId in (
+                <iterate property="mailids" conjunction=",  ">#mailids[]#</iterate>
+                )
+            </isNotNull>
+        </dynamic>
+    </update>
+
+    <delete id="deleteReceivedHeadEmailId" parameterClass="java.lang.String">
+        <![CDATA[ delete from txtbl_email_received where id = #id# ]]>
+    </delete>
+
+    <delete id="deleteReceivedBodyEmailId" parameterClass="java.lang.String">
+        <![CDATA[ delete from txtbl_rcvmail_body where emailid = #id#  ]]>
+    </delete>
+
+    <delete id="deleteReceivedAttachment" parameterClass="java.lang.String">
+        <![CDATA[ delete from txtbl_received_attachment where id <= #id#  ]]>
+    </delete>
+
+    <select id="getNewEmailCount" parameterClass="java.lang.String" resultClass="java.lang.Integer">
+        select count(id) from txtbl_email_received where status = '0' and user_id = #userId#
+    </select>
+
+    <select id="getNewEmailCountForAccount" parameterClass="java.lang.String" resultClass="java.lang.Integer">
+        select count(id) from txtbl_email_received where original_account = #name# and status = '0'
+    </select>
+
+    <select id="getDeliveredEmailCount" parameterClass="java.lang.String" resultClass="java.lang.Integer">
+        select count(id) from txtbl_email_received where status = '1' and user_id = #userId#
+    </select>
+
+    <select id="getEmailIds" parameterClass="java.util.HashMap" resultClass="head">
+        <![CDATA[ select id, messageId from txtbl_email_received where user_id = #userId# and id >= #startRange# and id <= #endRange#  ]]>
+    </select>
+
+    <update id="skipMessagesBeforeMailId" parameterClass="java.util.HashMap">
+        <![CDATA[
+               update txtbl_email_received
+                  set status='S'
+                where
+                  user_id=#user_id#
+                  and
+                  status = '0'
+                  and
+                  id < #mail_id#
+                  and
+                  message_type in ('TWITTER_STATUS', 'TWITTER_MENTION')
+                limit #limit#
+          ]]>
+    </update>
+
+</sqlMap>

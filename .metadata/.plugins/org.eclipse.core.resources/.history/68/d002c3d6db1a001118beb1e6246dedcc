@@ -1,0 +1,27 @@
+class MultiplicationTable
+{
+public static void main(String args[])
+{
+System.out.println("Hello World");
+int[][] mul_table_array = new int[10][10]; 
+int i,j;
+
+/*fill the array with results*/
+for(i=0;i<10;i++)
+{
+for(j=0;j<10;j++)
+{
+mul_table_array[i][j]=(i+1)*(j+1);
+}
+}
+
+/*Display the results in format AxB=C*/
+for(i=0;i<10;i++)
+{
+for(j=0;j<10;j++)
+{
+System.out.println(mul_table_array[i][j]);
+}
+}
+}
+}

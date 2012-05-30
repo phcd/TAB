@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans
+            http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
+
+    <bean id="authenticator" class="com.archermind.txtbl.authenticator.Authenticator" abstract="true"/>
+    <bean id="imapAuthenticator" class="com.archermind.txtbl.authenticator.ImapSSLAuthenticator" parent="authenticator"/>
+    <bean id="yahooImapAuthenticator" class="com.archermind.txtbl.authenticator.YahooImapAuthenticator" parent="imapAuthenticator"/>
+    <bean id="oauthAuthenticator" class="com.archermind.txtbl.authenticator.OauthAuthenticator" parent="imapAuthenticator"/>
+
+    <bean id="newProviderSupport" class="com.archermind.txtbl.receiver.mail.support.NewProviderSupport"/>
+    <bean id="xobniProviderSupport" class="com.archermind.txtbl.receiver.mail.support.XobniProviderSupport" parent="newProviderSupport"/>
+    <bean id="newMSExchangeSupport" class="com.archermind.txtbl.receiver.mail.support.NewMSExchangeProviderSupport" parent="newProviderSupport"/>
+    <bean id="newMSPSupport" class="com.archermind.txtbl.receiver.mail.support.NewMSPSupport" parent="newProviderSupport"/>
+    <bean id="activeSyncSupport" class="com.archermind.txtbl.receiver.mail.support.ActiveSyncSupport" parent="newProviderSupport"/>
+    <bean id="googleVoiceProviderSupport" class="com.archermind.txtbl.receiver.mail.support.GoogleVoiceProviderSupport" parent="newProviderSupport" />
+     <bean id="xobniActiveSyncSupport" class="com.archermind.txtbl.receiver.mail.support.XobniActiveSyncSupport" parent="activeSyncSupport" />
+
+    <bean id="newpop3" class="com.archermind.txtbl.receiver.mail.abst.impl.NewPOP3Provider">
+        <constructor-arg>
+            <ref bean="newProviderSupport" />
+        </constructor-arg>
+    </bean>
+
+    <bean id="newgmailpop3" class="com.archermind.txtbl.receiver.mail.abst.impl.NewPOP3Provider">
+        <constructor-arg>
+            <ref bean="newProviderSupport" />
+        </constructor-arg>
+    </bean>
+
+    <bean id="newgmailimap" class="com.archermind.txtbl.receiver.mail.abst.impl.NewImapProvider">
+        <constructor-arg>
+            <ref bean="newProviderSupport" />
+        </constructor-arg>
+        <constructor-arg>
+            <ref bean="imapAuthenticator" />
+        </constructor-arg>
+    </bean>
+
+    <bean id="newimapidle" class="com.archermind.txtbl.receiver.mail.abst.impl.NewImapIdleProviderFactory">
+        <constructor-arg ref="newProviderSupport"/>
+        <constructor-arg ref="imapAuthenticator"/>
+    </bean>
+
+    <bean id="xobniimapidle" class="com.archermind.txtbl.receiver.mail.abst.impl.NewImapIdleProviderFactory">
+        <constructor-arg>
+            <ref bean="xobniProviderSupport" />
+        </constructor-arg>
+        <constructor-arg>
+            <ref bean="imapAuthenticator" />
+        </constructor-arg>
+    </bean>
+
+    <bean id="xobnioauthidle" class="com.archermind.txtbl.receiver.mail.abst.impl.NewImapIdleProviderFactory">
+        <constructor-arg>
+            <ref bean="xobniProviderSupport" />
+        </constructor-arg>
+        <constructor-arg>
+            <ref bean="oauthAuthenticator" />
+        </constructor-arg>
+    </bean>
+
+    <bean id="xobniyahooimap" class="com.archermind.txtbl.receiver.mail.abst.impl.NewImapProvider">
+        <constructor-arg>
+            <ref bean="xobniProviderSupport" />
+        </constructor-arg>
+        <constructor-arg>
+            <ref bean="yahooImapAuthenticator" />
+        </constructor-arg>
+    </bean>
+
+    <bean id="xobniimap" class="com.archermind.txtbl.receiver.mail.abst.impl.NewImapProvider">
+        <constructor-arg>
+            <ref bean="xobniProviderSupport" />
+        </constructor-arg>
+        <constructor-arg>
+            <ref bean="imapAuthenticator" />
+        </constructor-arg>
+    </bean>
+
+    <bean id="xobnioauth" class="com.archermind.txtbl.receiver.mail.abst.impl.NewImapProvider">
+        <constructor-arg>
+            <ref bean="xobniProviderSupport" />
+        </constructor-arg>
+        <constructor-arg>
+            <ref bean="oauthAuthenticator" />
+        </constructor-arg>
+    </bean>
+
+    <bean id="xobnimsp" class="com.archermind.txtbl.receiver.mail.abst.impl.NewMSPProvider">
+        <constructor-arg>
+            <ref bean="xobniProviderSupport" />
+        </constructor-arg>
+        <property name="msgFilter">
+            <ref bean="msgFilter" />
+        </property>
+    </bean>
+
+
+
+    <bean id="newimap" class="com.archermind.txtbl.receiver.mail.abst.impl.NewImapProvider">
+        <constructor-arg>
+            <ref bean="newProviderSupport" />
+        </constructor-arg>
+        <constructor-arg>
+            <ref bean="imapAuthenticator" />
+        </constructor-arg>
+    </bean>
+
+    <bean id="newyahooimap" class="com.archermind.txtbl.receiver.mail.abst.impl.NewImapProvider">
+        <constructor-arg>
+            <ref bean="newProviderSupport" />
+        </constructor-arg>
+        <constructor-arg>
+            <ref bean="yahooImapAuthenticator" />
+        </constructor-arg>
+    </bean>
+
+    <bean id="newexchange" class="com.archermind.txtbl.receiver.mail.abst.impl.NewMSExchangeProvider" depends-on="newMSExchangeSupport">
+        <constructor-arg>
+            <ref bean="newMSExchangeSupport" />
+        </constructor-arg>
+    </bean>
+
+    <bean id="newmsp" class="com.archermind.txtbl.receiver.mail.abst.impl.NewMSPProvider">
+        <constructor-arg>
+            <ref bean="newMSPSupport" />
+        </constructor-arg>
+        <property name="msgFilter">
+            <ref bean="msgFilter" />
+        </property>
+    </bean>
+
+    <bean id="activesync" class="com.archermind.txtbl.receiver.mail.abst.impl.ActiveSyncProvider">
+        <constructor-arg>
+            <ref bean="activeSyncSupport" />
+        </constructor-arg>
+        <constructor-arg type="java.lang.String" value="PEEK"/>
+        <constructor-arg type="java.lang.String" value="Appl9C808MH40JW"/>
+    </bean>
+
+      <bean id="xobniactivesync" class="com.archermind.txtbl.receiver.mail.abst.impl.ActiveSyncProvider">
+        <constructor-arg>
+            <ref bean="xobniActiveSyncSupport" />
+        </constructor-arg>
+        <constructor-arg type="java.lang.String" value="PEEK"/>
+        <constructor-arg type="java.lang.String" value="Appl9C808MH40JW"/>
+    </bean>
+
+       <bean id="googlevoice" class="com.archermind.txtbl.receiver.mail.abst.impl.GoogleVoiceProvider">
+        <constructor-arg>
+            <ref bean="googleVoiceProviderSupport" />
+        </constructor-arg>
+    </bean>
+
+    <bean id="msgFilter" class="com.archermind.txtbl.receiver.mail.filter.MSGFilter">
+        <property name="parser">
+            <ref bean="pop3Parser" />
+        </property>
+    </bean>
+
+    <bean id="pop3Parser" class="com.archermind.txtbl.parser.MessageParser" />
+
+    <bean id="twitterSupport" class="com.archermind.txtbl.receiver.mail.support.TwitterSupport"/>
+
+    <bean id="twitter" class="com.archermind.txtbl.receiver.mail.abst.impl.TwitterProvider">
+        <constructor-arg>
+            <ref bean="twitterSupport" />
+        </constructor-arg>
+    </bean>
+
+    <bean id="imapsync" class="com.archermind.txtbl.receiver.mail.abst.impl.ImapSyncProvider">
+        <constructor-arg>
+            <ref bean="newProviderSupport" />
+        </constructor-arg>
+        <constructor-arg>
+            <ref bean="imapAuthenticator" />
+        </constructor-arg>
+    </bean>
+
+</beans>

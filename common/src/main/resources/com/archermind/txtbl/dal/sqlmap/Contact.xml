@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "sql-map-2.dtd">
+
+<sqlMap namespace="Contact">
+    
+    <insert id="addContact" parameterClass="com.archermind.txtbl.domain.Contact">
+      <![CDATA[
+        insert 
+        into txtbl_contact (
+          user_id, 
+          email, 
+          alias, 
+          phone, 
+          comment,
+          type)
+        values (
+          #userid#, 
+          #email#, 
+          #alias_name#, 
+          #phone#, 
+          #comment#,
+          #type#)
+      ]]>
+    </insert>
+    
+    <select id="getPagedContactsTwitter" parameterClass="java.util.HashMap" resultClass="com.archermind.txtbl.domain.Contact">
+    	select id as id,
+             user_id as userid,
+             email as email,
+       		`alias` as alias_name,
+             phone as phone,
+          	`comment` as comment,
+             type as type
+        from txtbl_contact
+        where user_id = #userid# and type = #type#
+        order by email asc
+        limit #row_no#, #page_size#
+    </select>
+
+    <select id="getPagedContacts" parameterClass="java.util.HashMap" resultClass="com.archermind.txtbl.domain.Contact">
+    	select id as id,
+             user_id as userid,
+             email as email,
+       		`alias` as alias_name,
+             phone as phone,
+          	`comment` as comment,
+             type as type
+        from txtbl_contact
+        where user_id = #userid#
+        order by alias asc
+        limit #row_no#, #page_size#
+    </select>
+    
+    <update id="modifyContact" parameterClass="com.archermind.txtbl.domain.Contact">
+      <![CDATA[
+        update txtbl_contact
+        set 
+          alias = #alias_name#, 
+          phone = #phone#,
+          email = #email#, 
+          comment = #comment# 
+        where 
+          id = #id#
+      ]]>
+    </update>
+    
+    <delete id="removeContact" parameterClass="java.util.HashMap">
+        delete 
+        from txtbl_contact 
+        <dynamic prepend="where">
+          <isNotNull prepend="and" property="id">
+            id = #id#
+          </isNotNull>
+          <isNotNull prepend="and" property="userid">
+            user_id = #userid#
+          </isNotNull>
+          <isNotNull prepend="and" property="email">
+            email = #email#
+          </isNotNull>
+          <isNotNull prepend="and" property="type">
+            type = #type#
+          </isNotNull>
+        </dynamic>
+    </delete>
+    
+</sqlMap>

@@ -1,0 +1,554 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "sql-map-2.dtd">
+
+<sqlMap namespace="Account">
+
+    <insert id="addAccount" parameterClass="com.archermind.txtbl.domain.Account">
+      <![CDATA[
+        insert into txtbl_email_account ( server_id,status,name,alias_name,login_name,user_id,password,comment,message,save_type,register_time,register_status,key_id,sent_id,folder_Name,exclude_folder)
+        values (#server_id#,#status#,#name#,#alias_name#,#loginName#,#user_id#,#securityPassword#,#comment#,#message#,#save_type#,now(),#register_status#,#key_id#,#sent_id#,#folderName#,#excludeFolder#)
+      ]]>
+    </insert>
+
+    <delete id="deleteAccount" parameterClass="com.archermind.txtbl.domain.Account">
+        delete from txtbl_email_account where id = #id#
+    </delete>
+
+    <delete id="deleteAccounts" parameterClass="java.lang.String">
+        delete from txtbl_email_account  where user_id = #id#
+    </delete>
+
+    <select id="getUserId" parameterClass="java.lang.String" resultClass="java.lang.Integer">
+        select
+        user_id as user_id
+        from txtbl_email_account
+        where
+          name = #name#
+    </select>
+
+    <select id="getUserIdByAccId" parameterClass="java.lang.String" resultClass="java.lang.String">
+        select
+        user_id as user_id
+        from txtbl_email_account
+        where
+          id = #accountId#
+    </select>
+
+    <select id="getXobniAccountData" resultClass="com.archermind.txtbl.domain.XobniAccount">
+        <![CDATA[
+        select
+          tea.user_id as userID,
+          tea.name as name,
+          xa.oauth_token as oauthToken,
+          xa.oauth_token_secret as oauthTokenSecret,
+          xa.consumer_key as consumerKey,
+          xa.consumer_secret as consumerSecret,
+          xa.session_id as sessionId,
+          xa.db_version as dbVersion,
+          xa.sync_url as syncUrl,
+          xa.status as status,
+          xa.last_sync_failure as lastSyncFailure,
+          xa.last_sync_failure_date as lastSyncFailureDate,
+          xa.sync_failure_count as syncFailureCount
+        from
+          txtbl_email_account tea,
+          xobni_account xa
+        where
+          tea.name = xa.name
+          and tea.user_id = #id#
+        ]]>
+    </select>
+
+    <select id="getXobniAccountCount" resultClass="java.lang.Integer">
+        <![CDATA[ select count(*) from xobni_account where name = #name# ]]>
+    </select>
+
+    <select id="getTwitterToken" parameterClass="java.lang.String" resultClass="com.archermind.txtbl.domain.TwitterAccount">
+        <![CDATA[
+        select
+                ta.name as name,
+                ta.oauth_toke as oAuthToken,
+                ta.oauth_token_secret as oAuthTokenSecret
+        from
+                twitter_account ta
+        where
+                ta.name=#value#
+
+        ]]>
+
+    </select>
+
+    <select id="getAccount" parameterClass="java.util.HashMap" resultClass="com.archermind.txtbl.domain.Account">
+        select
+          a.server_id as server_id,
+          a.sent_id,
+          a.status as status ,
+          a.id as id,
+          a.alias_name as alias_name,
+          a.name as name,
+          a.login_name as loginName,
+          a.user_id as user_id,
+          a.key_id,
+          a.password as securityPassword,
+          xa.oauth_token as oauthToken,
+          xa.oauth_token_secret as oauthTokenSecret,
+          xa.consumer_key as consumerKey,
+          xa.consumer_secret as consumerSecret,
+          a.message as message ,
+          a.register_status,
+          a.login_status,
+          <![CDATA[a.comment as comment]]>,
+          a.folder_hash,
+          a.message_count,
+          a.last_mailcheck,
+          a.folder_depth,
+          a.last_reconciliation,
+          a.last_received_date,
+          a.last_received_tweet_id,
+          a.last_received_dm_id,
+          a.last_sent_dm_id,
+          a.last_received_mention_id,
+          a.login_failures,
+          a.active_sync_key,
+          a.active_sync_device_type,
+          a.active_sync_device_id,
+          a.last_calendar,
+          a.last_login_failure,
+          a.folder_name as folderName,
+          a.exclude_folder as excludeFolder,
+          b.country as country,
+          b.partner_code as partnerCode,
+          c.receive_host as receiveHost,
+          c.receive_port as receivePort,
+          c.orderFlag as orderFlag,
+          c.receive_ts as receiveTs,
+          c.receive_protocol_type as receiveProtocolType,
+          c.fba_path as receiveHostFbaPath,
+          c.prefix as receiveHostPrefix
+        from txtbl_email_account a left join xobni_account xa on a.name = xa.name, txtbl_user b, `txtbl_sys_received` c
+        where a.user_id = b.id
+        and a.server_id = c.id
+        <isNotNull prepend="and" property="id">
+          a.id = #id#
+        </isNotNull>
+        <isNotNull prepend="and" property="name">
+          <![CDATA[a.name = #name#]]>
+        </isNotNull>
+        <isNotNull prepend="and" property="user_id">
+          a.user_id = #user_id#
+        </isNotNull>
+        <isNotNull prepend="and" property="status">
+          a.status = #status#
+        </isNotNull>
+    </select>
+
+
+    <select id="getAccountData" parameterClass="java.lang.String" resultClass="java.util.HashMap">
+        select
+          id,
+          folder_hash,
+          message_count,
+          last_mailcheck,
+          folder_depth,
+          last_reconciliation,
+          register_time,
+          last_received_date,
+          last_received_tweet_id,
+          last_received_dm_id,
+          last_sent_dm_id,
+          last_received_mention_id,
+          last_login_failure,
+          login_failures,
+          last_calendar,
+          active_sync_key,
+          active_sync_device_type,
+          active_sync_device_id,
+          last_calendar
+        from txtbl_email_account
+        where name = #value#
+    </select>
+
+    <select id="getAccountSubscribeAlertDate" parameterClass="java.lang.String" resultClass="java.util.Date">
+        select
+          last_msp_subscription_request
+        from txtbl_email_account
+        where name = #value#
+    </select>
+
+    <update id="modifyAccount" parameterClass="com.archermind.txtbl.domain.Account">
+        update txtbl_email_account
+        set server_id =#server_id#, sent_id = #sent_id#,alias_name =#alias_name#,status=#status#,
+          login_name = #loginName#,
+          user_id = #user_id#,
+          password = #securityPassword#,
+          register_status = #register_status#,
+          key_id = #key_id#,login_status = #login_status#,
+          <![CDATA[message = #message#]]>,
+          <![CDATA[comment = #comment#]]>
+        where name = #name#
+    </update>
+
+    <update id="updateStatus" parameterClass="java.util.HashMap">
+        update txtbl_email_account set status = #status# where id = #id#
+    </update>
+
+    <update id="resetAccount" parameterClass="com.archermind.txtbl.domain.Account">
+        update txtbl_email_account set last_mailcheck = NULL, last_received_date = NULL, message_count = 0, folder_depth = NULL, folder_hash = NULL where id = #id#
+    </update>
+
+   <select id="getAccountExArray" parameterClass="java.util.HashMap" resultClass="com.archermind.txtbl.domain.Account">
+       select 	id,name ,
+        		loginName,
+				alias_name,
+				user_id,
+				receiveProtocolType,
+				max(needAuth) as needAuth,
+				status,
+				domain,
+				message,
+				save_type,
+				register_status,
+        		max(comment) as comment, country, partnerCode
+
+
+       from (
+      	select 	max(a.id) as id,a.name,
+		 	max(a.login_name) as loginName,
+		 	max(a.alias_name) as alias_name,
+		 	a.user_id,
+		 	max(s.send_protocol_type) as receiveProtocolType,
+		 	count(*) as needAuth,
+		 	'0'	 as  comment,
+		 	max(a.status) as status,
+		 	max(s.name) as domain,
+		 	max(a.register_time) as message,
+		 	max(a.register_status) as register_status,
+			CASE when  max(a.save_type) =	 '1' 	THEN  'Admin-GUI'  	ELSE  'Device' END as  save_type, b.country,
+            b.partner_code as partnerCode
+	  from txtbl_email_account a,`txtbl_sys_sent` s,txtbl_email_sent c, txtbl_user b
+		    where b.id = a.user_id
+            and a.sent_id=s.id
+		    and a.user_id = c.user_id
+		    and a.name  = c.from
+		    and s.`status` = '1'
+		    and (a.user_id=#user_id# or b.peek_account=#user_id#)
+		    and a.status=#status#
+ 	   group by a.name,a.user_id
+
+ 	   union all
+
+ 		select 	max(a.id) as id,a.name,
+		 	max(a.login_name) as loginName,
+		 	max(a.alias_name) as alias_name,
+		 	a.user_id,
+		 	max(s.receive_protocol_type) as receiveProtocolType,
+		 	'0' as needAuth,
+		 	count(*)	 as  comment,
+		 	max(a.status) as status,
+		 	max(s.name) as domain,
+		 	max(a.register_time) as message,
+		 	max(a.register_status) as register_status,
+			CASE when  max(a.save_type) =	 '1' 	THEN  'Admin-GUI'  	ELSE  'Device' END as  save_type,
+            b.country, b.partner_code as partnerCode
+	  from txtbl_email_account a,`txtbl_sys_received` s,txtbl_email_received c, txtbl_user b
+		    where b.id = a.user_id
+		    and a.server_id=s.id
+		    and a.user_id = c.user_id
+		    and a.name  = c.original_account
+		    and s.`status` = '1'
+		    and (a.user_id=#user_id# or b.peek_account=#user_id#)
+		    and a.status=#status#
+ 	   group by a.name,a.user_id
+ 	   union all
+ 			select  a.id,a.name,
+		 	a.login_name as loginName,
+		 	a.alias_name as alias_name,
+		 	a.user_id,
+		 	s.receive_protocol_type as receiveProtocolType,
+		 	'0'  as needAuth,
+		 	'0'	 as  comment,
+		 	a.status as status,
+		 	s.name as domain,
+		 	a.register_time as message,
+		 	a.register_status,
+			CASE when  a.save_type =	 '1' 	THEN  'Admin-GUI'  	ELSE  'Device' END as  save_type, b.country
+            , b.partner_code as partnerCode
+	  from txtbl_email_account a,`txtbl_sys_received` s, txtbl_user b
+		    where b.id = a.user_id
+		    and a.server_id=s.id
+		    and s.`status` = '1'
+		    and (a.user_id=#user_id# or b.peek_account=#user_id#)
+		    and a.status=#status#  ) a
+		group by id,name ,
+        		loginName,
+				alias_name,
+				user_id,
+				receiveProtocolType,
+				status,
+				domain,
+				message,
+				save_type,
+				register_status, country, partnerCode
+
+
+   </select>
+
+    <select id="getAccountExArrayNoReceive" parameterClass="java.util.HashMap" resultClass="com.archermind.txtbl.domain.Account">
+ 		select a.id,a.name,
+		 	a.login_name as loginName,
+		 	a.alias_name as alias_name,
+		 	a.user_id,
+		 	a.receive_protocol_type as receiveProtocolType,
+		 	'0'	 as  comment,
+		 	a.operate_time as message,
+		 	s.name as domain,
+			CASE when  a.save_type =	 '1' 	THEN  'Admin-GUI'  	ELSE  'Device' END as  save_type
+	  from txtbl_email_account_history a,`txtbl_sys_received` s, txtbl_user b
+		    where a.server_id=s.id
+            and b.id = a.user_id
+		    and (a.user_id=#user_id# or b.peek_account=#user_id#)
+    </select>
+
+    <update id="clearAccountExceptionMessages" parameterClass="java.lang.String">
+
+        update txtbl_email_account
+        set message = "" , login_status = '0'
+        where user_id = #user_id#
+
+    </update>
+
+     <update id="updateAccountMessages" parameterClass="java.util.HashMap">
+        update txtbl_email_account
+        set message = #message# ,login_status = #login_status#
+        where name = #name#
+    </update>
+
+    <insert id="saveEmailGuess" parameterClass="com.archermind.txtbl.domain.Guess">
+      <![CDATA[insert into txtbl_email_guess (name,commnet,guess_time) values (#name#,#commnet#,now())]]>
+    </insert>
+
+     <select id="getReceiveAccount" parameterClass="java.lang.String" resultClass="com.archermind.txtbl.domain.Account">
+    		  select b.id as id,
+                       a.id as user_id,
+                       b.name as name,
+                       b.login_name as loginName,
+                       b.password as securityPassword,
+                       xa.oauth_token as oauthToken,
+                       xa.oauth_token_secret as oauthTokenSecret,
+                       xa.consumer_key as consumerKey,
+                       xa.consumer_secret as consumerSecret,
+                       b.last_login_failure as last_login_failure,
+                       b.login_failures as login_failures,
+                       b.folder_name as folderName,
+                       b.exclude_folder as excludeFolder,
+                       c.receive_host as receiveHost,
+                       c.receive_port as receivePort,
+                       c.orderFlag as orderFlag,
+                       c.receive_ts as receiveTs,
+                       c.receive_protocol_type as receiveProtocolType,
+                       c.fba_path as receiveHostFbaPath,
+                       c.prefix as receiveHostPrefix,
+                       b.register_status as register_status,
+                       b.register_time as register_time,
+                       b.key_id as key_id,
+                       b.last_received_date as last_received_date,
+                       a.comment as features, a.country, a.partner_code as partnerCode
+ 			  from `txtbl_user` a,`txtbl_email_account` b  left join xobni_account xa on b.name = xa.name,`txtbl_sys_received` c,`txtbl_msp_token` d
+ 			  where a.id = b.user_id
+ 			  	and c.id = b.server_id
+ 				and a.id = d.user_id
+ 				and b.name = d.name
+ 			  	and a.status = '1'
+ 			  	and b.status = '1'
+ 			  	and c.status = '1'
+ 			  	and d.`transaction_id` = #transactionid#
+    </select>
+
+    <select id="getAccountToTaskfactory" parameterClass="java.lang.String" resultClass="com.archermind.txtbl.domain.Account">
+		select
+               b.id as id,
+               a.id as user_id,
+			   b.name as name,
+			   b.login_name as loginName,
+			   b.password as securityPassword,
+               b.folder_name as folderName,
+               b.exclude_folder as excludeFolder,
+               xa.oauth_token as oauthToken,
+               xa.oauth_token_secret as oauthTokenSecret,
+               xa.consumer_key as consumerKey,
+               xa.consumer_secret as consumerSecret,
+               b.last_login_failure as last_login_failure,
+			   b.login_failures as login_failures,
+			   c.receive_host as receiveHost,
+			   c.receive_port as receivePort,
+			   c.orderFlag as orderFlag,
+			   c.receive_ts as receiveTs,
+			   c.receive_protocol_type as receiveProtocolType,
+               c.fba_path as receiveHostFbaPath,
+               c.prefix as receiveHostPrefix,
+			   b.register_status as register_status,
+               b.register_time as register_time,
+			   b.key_id as key_id,
+			   a.comment as features,
+               b.last_received_date as last_received_date, a.country, a.partner_code as partnerCode,
+               b.active_sync_device_type,
+               b.active_sync_key
+		 from `txtbl_user` a,`txtbl_email_account` b  left join xobni_account xa on b.name = xa.name,`txtbl_sys_received` c
+		where a.id = b.user_id
+			and c.id = b.server_id
+			and a.status = '1'
+			and b.status = '1'
+			and c.status = '1'
+			and c.receive_protocol_type = #sRvcPtlType#
+    </select>
+
+    <update id="updateAccountReceiveInfo" parameterClass="com.archermind.txtbl.domain.Account">
+        update txtbl_email_account
+        set
+          folder_hash=#folder_hash#,
+          message_count=#message_count#,
+          last_mailcheck=#last_mailcheck#,
+          folder_depth=#folder_depth#,
+          last_reconciliation=#last_reconciliation#,
+          last_received_tweet_id=#last_received_tweet_id#,
+          last_received_dm_id=#last_received_dm_id#,
+          last_sent_dm_id=#last_sent_dm_id#,
+          last_received_mention_id=#last_received_mention_id#,
+          login_failures=#login_failures#,
+          last_login_failure=#last_login_failure#,
+          active_sync_key=#active_sync_key#
+        where id = #id#
+    </update>
+
+
+
+    <update id="updateXobniAccount" parameterClass="com.archermind.txtbl.domain.XobniAccount">
+        update xobni_account
+        set
+            oauth_token = #oauthToken#,
+            oauth_token_secret = #oauthTokenSecret#,
+            consumer_key = #consumerKey#,
+            consumer_secret = #consumerSecret#,
+            sync_url = #syncUrl#,
+            session_id = #sessionId#,
+            status = #status#,
+            last_sync_failure = #lastSyncFailure#,
+            last_sync_failure_date = #lastSyncFailureDate#,
+            sync_failure_count = #syncFailureCount#
+        where name = #name#
+    </update>
+
+    <update id="updateXobniStatus" parameterClass="java.util.HashMap">
+        update xobni_account set status = #status# where name = #name#
+    </update>
+
+    <update id="updateXobniDBVersion" parameterClass="java.util.HashMap">
+        update xobni_account set db_version=#dbVersion# where name = #name#
+    </update>
+
+    <update id="updateAccountReceiveInfoAndReceivedDate" parameterClass="com.archermind.txtbl.domain.Account">
+        update txtbl_email_account
+        set
+          folder_hash=#folder_hash#,
+          message_count=#message_count#,
+          last_mailcheck=#last_mailcheck#,
+          folder_depth=#folder_depth#,
+          last_reconciliation=#last_reconciliation#,
+          last_received_date=#last_received_date#,
+          last_received_tweet_id=#last_received_tweet_id#,
+          last_received_dm_id=#last_received_dm_id#,
+          last_sent_dm_id=#last_sent_dm_id#,
+          last_received_mention_id=#last_received_mention_id#,
+          login_failures=#login_failures#,
+          last_login_failure=#last_login_failure#,
+          active_sync_key=#active_sync_key#
+        where id = #id#
+    </update>
+
+    <update id="updateAccountFolderIdAndMessagingId" parameterClass="com.archermind.txtbl.domain.Account">
+        update txtbl_email_account
+        set
+          folder_id=#folder_id#,
+          messaging_id=#messaging_id#
+        where id = #id#
+    </update>
+
+    <update id="updateAccountExchangeConnectionMode" parameterClass="java.util.HashMap">
+        update txtbl_email_account
+        set
+          exchange_conn_mode=#exchange_conn_mode#
+        where id = #id#
+    </update>
+
+    <update id="updateAccountSubscribeRequestDate" parameterClass="java.util.HashMap">
+        update txtbl_email_account
+        set last_msp_subscription_request=#date#
+        where id = #accountId#
+    </update>
+
+    <select id="getAccountFolderIdAndMessagingId" parameterClass="com.archermind.txtbl.domain.Account" resultClass="com.archermind.txtbl.domain.Account">
+         select folder_id,
+                messaging_id
+          from txtbl_email_account
+          where id = #id#
+   </select>
+
+    <select id="getAccountExchangeConnectionMode" parameterClass="com.archermind.txtbl.domain.Account" resultClass="java.lang.String">
+         select exchange_conn_mode
+          from txtbl_email_account
+          where id = #id#
+   </select>
+
+
+    <update id="resetLoginFailureCount" parameterClass="java.util.HashMap">
+        update txtbl_email_account
+        set login_failures=0, last_login_failure=null
+        where name = #accountName#
+    </update>
+
+    <update id="resetCalendarDate" parameterClass="java.util.HashMap">
+        update txtbl_email_account
+        set last_calendar=#date#
+        where name = #accountName#
+    </update>
+
+    <update id="resetContactsKey" parameterClass="java.util.HashMap">
+        update txtbl_email_account
+        set contacts_sync_key=#contacts_sync_key#
+        where name = #accountName#
+    </update>
+
+    <delete id="deleteXobniAccount" parameterClass="java.util.HashMap">
+        delete from xobni_account where name = #name#
+    </delete>
+
+    <insert id="addXobniAccount" parameterClass="com.archermind.txtbl.domain.XobniAccount">
+      <![CDATA[
+        insert into xobni_account (name,oauth_token,oauth_token_secret,session_id,db_version,sync_url,consumer_key, consumer_secret, status)
+        values (#name#,#oauthToken#,#oauthTokenSecret#,#sessionId#,#dbVersion#,#syncUrl#,#consumerKey#,#consumerSecret#, #status#)
+      ]]>
+    </insert>
+
+     <delete id="deleteTwitterAccount" parameterClass="java.util.HashMap">
+        delete from twitter_account where name = #name#
+    </delete>
+
+    <select id="getAccountsCountByProvider" resultClass="java.lang.Integer">
+        <![CDATA[ select count(*) from txtbl_email_account tea, txtbl_user tu where tu.id = tea.user_id and (tu.country = #provider# or tu.partner_code = #provider#) ]]>
+    </select>
+
+    <select id="getStalledXobniAccountsCount" resultClass="java.lang.Integer">
+        <![CDATA[ select count(*) from txtbl_email_account tea, txtbl_user tu where tu.id = tea.user_id and tea.message_count = 0 and (tea.folder_depth > 0 or tea.folder_depth is NULL) and tea.login_failures < 3 ]]>
+    </select>
+
+    <select id="getSyncDisabledXobniAccounts" parameterClass="java.util.HashMap" resultClass="java.lang.Integer">
+        select tea.id from txtbl_email_account tea, txtbl_user tu, xobni_account xa
+        where tu.id = tea.user_id and xa.name = tea.name and xa.status = 0 and tu.country = #country#
+        <isNotNull prepend="and" property="date">
+          xa.last_sync_failure_date > #date#
+        </isNotNull>
+    </select>
+
+
+</sqlMap>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "sql-map-2.dtd">
+
+<sqlMap namespace="PeekdomUser">
+
+    <select id="getUser" parameterClass="java.util.HashMap" resultClass="com.archermind.txtbl.domain.PeekdomUser">
+        select provider from peekdom_user where username = #userName#
+        <isNotNull prepend="and" property="password">
+          password = #password#
+        </isNotNull>
+    </select>
+
+</sqlMap>

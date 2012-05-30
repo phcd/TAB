@@ -1,0 +1,14 @@
+Manifest-Version: 1.0
+Specification-Title: JavaMail(TM) API Design Specification
+Created-By: 1.5.0_06-b05 (Sun Microsystems Inc.)
+Specification-Version: 1.4
+Implementation-Vendor-Id: com.sun
+Implementation-URL: http://www.jboss.org/
+Class-Path: activation.jar
+Ant-Version: Apache Ant 1.6.5
+Implementation-Title: JavaMail(TM) API Reference Implementation
+Specification-Vendor: Sun Microsystems, Inc.
+Extension-Name: javax.mail
+Implementation-Version: 1.4
+Implementation-Vendor: Sun Microsystems, Inc.
+

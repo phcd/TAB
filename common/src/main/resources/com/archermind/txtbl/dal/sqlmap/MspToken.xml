@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "sql-map-2.dtd">
+
+<sqlMap namespace="MspToken">
+    
+    <typeAlias alias="mspToken" type="com.archermind.txtbl.domain.MspToken"/>
+    
+    <insert id="addMspToken" parameterClass="mspToken">
+      <![CDATA[
+        insert into `txtbl_msp_token` ( user_id, name,`token_id`,`transaction_id`,`create_number`,`create_time`,comment)
+        values (#user_id#,#name#,#token_id#,#transaction_id#,#create_number#,now(), #comment#)
+      ]]>
+    </insert>
+    
+    <select id="getMspToken" parameterClass="java.util.HashMap" resultClass="mspToken">
+        select * from txtbl_msp_token 	
+         <dynamic prepend="where">
+          <isNotNull prepend="and" property="user_id">
+            user_id = #user_id#
+          </isNotNull>
+          <isNotNull prepend="and" property="name">
+           	name = #name# 
+          </isNotNull>
+        </dynamic>
+    </select>
+        
+    <update id="modifyMspToken" parameterClass="mspToken">
+        update txtbl_msp_token
+        set  `create_time` = now(), 
+          	 token_id = #token_id#,
+          	 transaction_id = #transaction_id#, 
+          	 create_number = #create_number#, 
+          	 comment = #comment# 
+        where user_id = #user_id#
+          and name = #name#
+    </update>
+    
+    <delete id="removeMspToken" parameterClass="java.util.HashMap">
+        delete from txtbl_msp_token
+        <dynamic prepend="where">
+         <isNotNull prepend="and" property="user_id">
+           user_id = #user_id#
+         </isNotNull>
+         <isNotNull prepend="and" property="name">
+              name = #name#
+         </isNotNull>
+       </dynamic>
+    </delete>
+    
+</sqlMap>

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
+	id="WebApp_ID" version="2.5">
+	<display-name>txtbl-tf-servlet</display-name>
+	<listener>
+		<listener-class>com.archermind.txtbl.taskfactory.web.InitContext</listener-class>
+	</listener>
+	
+	<servlet>
+		<description>TFSubscribeServlet</description>
+		<display-name>TFSubscribeServlet</display-name>
+		<servlet-name>TFSubscribeServlet</servlet-name>
+		<servlet-class>
+			com.archermind.txtbl.taskfactory.web.TFSubscribeServlet
+		</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>TFSubscribeServlet</servlet-name>
+		<url-pattern>/subscribe/mail.asmx</url-pattern>
+	</servlet-mapping>
+</web-app>

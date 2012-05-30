@@ -1,0 +1,428 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "sql-map-2.dtd">
+
+<sqlMap namespace="TxtblWebService">
+
+    <insert id="backupDeactivateSubscriberEmailAccount"  parameterClass="com.archermind.txtbl.domain.Account">
+    	insert into txtbl_email_account_history(name,login_name,alias_name,user_id,password,comment,server_id,sent_id,key_id,save_type,operate_time)
+    	select t.name,t.login_name,t.alias_name,t.user_id,t.password,t.comment,t.server_id,t.sent_id,t.key_id,t.save_type,now()
+		from txtbl_email_account t where t.name=#name# 
+    </insert>
+    
+    <insert id="backupDeactivatePeekAccount" parameterClass="java.lang.String">
+    	insert into txtbl_user_history(
+    	id,peek_account,registe_time,status,alias,firstname,lastname,
+    	middlename,gender,birthday,description,comment,opertor_time, country)
+    	select 
+    	t.id,t.peek_account,t.registe_time,t.status,t.alias,
+    	t.firstname,t.lastname,t.middlename,t.gender,t.birthday,
+    	t.description,t.comment,now(), t.country 
+    	from txtbl_user t where t.id=#value#
+    </insert>
+
+    <update id="activateNewExpiryPeriod_step1_active" parameterClass="com.archermind.txtbl.domain.Device">
+        update txtbl_user as tu
+        set
+			tu.status = '1'
+        where
+        	tu.id = #user_id#
+    </update>
+    
+    <update id="SuspendPeekAccount_step1_active" parameterClass="com.archermind.txtbl.domain.Device">
+        update txtbl_user as tu
+        set
+			tu.status = '0'
+        where
+        	tu.id = #user_id#
+    </update>
+    
+    <select id="activateOrDeactiveNewExpiryPeriod_step2_select" parameterClass="com.archermind.txtbl.domain.Device" resultClass="com.archermind.txtbl.domain.Account" >
+        select tea.id as id,
+			  tea.name as name,
+			  tea.login_name as loginName,
+			  tea.user_id as user_id,
+			  tea.key_id as key_id,
+			  tea.password as securityPassword,                                                                 
+			  tea.server_id as server_id,
+			  tea.comment as comment,
+			  tea.status as status,
+			  tea.message as message,tea.register_status, tu.country, tu.partner_code as partnerCode
+		from txtbl_email_account tea, `txtbl_sys_received` s, txtbl_user tu
+        where tea.user_id = tu.id
+        and tea.server_id = s.id
+        and s.`status` = '1'
+        and	tea.user_id = #user_id#
+    </select>
+    
+    <select id="queryCurrentAccountUnderQwert" parameterClass="java.util.Map" resultClass="com.archermind.txtbl.domain.Account" >
+        select
+			  tea.id as id,
+			  tea.name as name,
+			  tea.login_name as loginName,
+			  tea.user_id as user_id,tea.key_id as key_id,
+			  tea.password as securityPassword,
+			  s.receive_host as receiveHost,
+			  s.receive_port as receivePort,
+			  s.receive_protocol_type as receiveProtocolType,
+			  s.receive_ts as receiveTs,
+			   s.orderFlag as orderFlag,
+			  s.level as level,
+			  comment as comment,
+			  tea.status as status,
+			  tea.message as message,tea.register_status, tu.country, tu.partner_code as partnerCode
+		from txtbl_email_account tea ,`txtbl_sys_received` s, txtbl_user tu
+        where tea.user_id = tu.id
+		and tea.server_id = s.id and s.`status` = '1'
+			<isNotEmpty prepend=" and " property="userId">
+				<![CDATA[(tea.user_id = #userId#)]]>
+			</isNotEmpty>
+			<isNotEmpty prepend=" and " property="status">
+				<![CDATA[(tea.status = #status#)]]>
+			</isNotEmpty>
+			<isNotEmpty prepend=" and " property="name">
+				<![CDATA[(tea.name like #name#)]]>
+			</isNotEmpty>			
+	    </select>
+    
+	<insert id="addPop3Server" parameterClass="com.archermind.txtbl.domain.Server">
+		<![CDATA[
+			insert into txtbl_sys_received(
+				name,
+				status,
+				receive_host,
+				receive_port,
+				receive_protocol_type,
+				receive_ts,
+				comment,
+				orderFlag,
+				level,
+				save_time,
+				fba_path,
+				prefix)
+	        values(
+	           	#name#,
+	        	#status#,
+				#receiveHost#,
+				#receivePort#,
+				#receiveProtocolType#,
+				#receiveTs#,
+				#comment#,
+				#orderFlag#,
+				#level#,
+				now(),
+				#receiveHostFbaPath#,
+				#receiveHostPrefix#)
+			
+		]]>
+	</insert>
+
+   	<select id="viewQwertAccountForSplitpage" parameterClass="java.util.Map" resultClass="com.archermind.txtbl.domain.User" >
+       select
+			tu.id as id,
+			tu.peek_account as peek_account,
+			td.device_code  as device_id,
+			tu.registe_time as registeTime,
+			tu.status as status,
+			tu.alias as alias,
+			tu.firstname as firstname,
+			tu.lastname as lastname,
+			tu.middlename as middlename,
+			tu.gender as gender,
+			tu.birthday as birthday,
+			tu.description as description,
+			tu.comment as comment, tu.country as country, tu.partner_code as partnerCode
+		from txtbl_user tu,txtbl_device td
+		where tu.id=td.user_id
+		<isNotEmpty prepend=" and " property="firstName">
+			<![CDATA[(tu.firstname like #firstName#)]]>
+		</isNotEmpty>
+		<isNotEmpty prepend=" and " property="lastName">
+			<![CDATA[(tu.lastname like #lastName#)]]>
+		</isNotEmpty>
+		<isNotEmpty prepend=" and " property="status">
+			<![CDATA[(tu.status = #status#)]]>
+		</isNotEmpty>
+		<isNotEmpty prepend=" and " property="sex">
+			<![CDATA[(tu.gender = #sex#)]]>
+		</isNotEmpty>
+		<isNotEmpty prepend=" and " property="startDate">
+			<![CDATA[tu.registe_time>=#startDate#]]>
+		</isNotEmpty>
+		<isNotEmpty prepend=" and " property="endDate">
+			<![CDATA[tu.registe_time<=#endDate#]]>
+		</isNotEmpty>		
+    </select>
+    
+    <select id="queryCookieByAccount" parameterClass="java.lang.String" resultClass="com.archermind.txtbl.domain.TxtblCookie" >
+        select  id as id,
+		  email_account as emailAccount,
+		  cookies_name as cookiesName,
+		  cookies_value as cookiesValue,
+		  domain as domain,
+		  path as path,
+		  expiry_date as expiryDate,
+		  secure as secure
+		from txtbl_email_cookies
+        where email_account = #accountName#
+    </select>
+    
+    <insert id="saveTxtblCookies" parameterClass="com.archermind.txtbl.domain.TxtblCookie">
+		<![CDATA[
+			insert into txtbl_email_cookies(
+				email_account,
+				cookies_name,
+				cookies_value,
+				domain,
+				path,
+				expiry_date,
+				secure)
+	        values(
+	        	#emailAccount#,
+	        	#cookiesName#,
+				#cookiesValue#,
+				#domain#,
+				#path#,
+				#expiryDate#,
+				#secure#)
+		]]>
+	</insert>
+	
+	<delete id="deleteCookiesByAccountName" parameterClass="java.lang.String">
+        delete
+			from txtbl_email_cookies
+        where
+			email_account = #accountName#
+    </delete>
+    
+    <select id="getUserIdByPeekAccountId" parameterClass="java.lang.String" resultClass="java.lang.Integer">
+    	select id from txtbl_user
+    	where peek_account=#peekAccount#
+    </select>
+    
+    <!-- above are for only one method DeactivatePeekAccount -->
+    
+     <select id="transferquery" parameterClass="java.util.Map" resultClass="com.archermind.txtbl.domain.Device" >
+   			select b.user_id,
+   				   b.device_code as deviceCode,
+   				   b.model ,
+   				   b.sim_code as Sim_code,
+   				   b.capability,
+   				   b.state,
+   				   b.operate_time,
+   				   b.comment,
+   				   b.id  
+   			from txtbl_user a, txtbl_device b 
+   			where a.id = b.user_id 
+   			and b.state = '1' 
+   			and a.peek_account = #peek_account#
+   			and b.device_code = #device_code#
+   			and b.sim_code = #sim_code#
+   			
+    </select>
+    
+     <update id="indiaTransferupdate" parameterClass="java.util.Map"  >
+   		<![CDATA[ 
+   		update txtbl_device
+   		set device_code = #toDeviceIMEI#,
+   			sim_code = #toSIM#,
+   			msisdn = #msisdn# ,
+          	pp_flag = #pp_flag#
+		where user_id = #user_id#
+		and device_code = #device_code#
+		and sim_code = #sim_code#
+		]]>	 
+    </update> 
+    
+     <update id="transferupdate" parameterClass="java.util.Map"  >
+   		<![CDATA[ 
+   		update txtbl_device
+   		set device_code = #toDeviceIMEI#,
+   			sim_code = #toSIM#
+		where user_id = #user_id#
+		and device_code = #device_code#
+		and sim_code = #sim_code#
+		]]>	 
+    </update> 
+    
+     <select id="getReceiveList" parameterClass="java.util.Map" resultClass="com.archermind.txtbl.domain.Email" >
+   			select mailid,
+	           userId,
+	           `from`,
+	           from_alias,
+	            `to`,
+	            cc,
+	            reply,
+	            subject,
+	            bodySize,
+	           max(commnet) as comment,
+	            maildate,
+	            status,modify_time, receivedTime,original_account
+   			
+   			from
+   			( select id as mailid,
+	           user_id as userId,
+	           `from` as `from`,
+	           from_alias,
+	           `to` as `to`,
+	           cc as cc,
+	           reply as reply,
+	           subject as subject,
+	           body_size as bodySize,
+	           '0' as commnet,
+	           maildate as maildate,
+	           status as status,modify_time,received_time as receivedTime,original_account
+	        from txtbl_email_received
+	          where  original_account =  #original_account#
+	          and user_id = #user_id#
+	       union all
+			select  a.id as mailid,
+	           user_id as userId,
+	           `from` as `from`,
+	           max(from_alias) as from_alias,
+	           max(`to`) as `to`,
+	           max(cc) as cc,
+	           max(reply) as reply,
+	           max(subject) as subject,
+	           max(body_size) as bodySize,
+	           count(*) as commnet,
+	           max(maildate) as maildate,
+	           max(status) as status,max(modify_time) as modify_time ,
+	           max(received_time) as receivedTime,max(original_account) as original_account
+	        from txtbl_email_received a, txtbl_received_attachment b
+			where a.id = b.email_id
+			and original_account =  #original_account#
+	        and user_id = #user_id#
+	        group by  a.id ,  user_id ,`from`) a
+	        group by mailid,
+	           userId,
+	           `from`,
+	           from_alias,
+	            `to`,
+	            cc,
+	            reply,
+	            subject,
+	            bodySize,
+	            maildate,
+	            status,modify_time, receivedTime,original_account
+   			order by maildate desc
+            <isNotNull property="limit">
+             limit #limit#
+            </isNotNull>
+    </select>
+    
+    <select id="getReceiveAttachmentList" parameterClass="java.lang.String" resultClass="com.archermind.txtbl.domain.Attachment" >
+    	select email_id as emailId ,size  , name 
+    	from txtbl_received_attachment 
+    	where email_id = #emailid#
+ 
+    </select>
+    
+       <select id="getSentList" parameterClass="java.util.Map" resultClass="com.archermind.txtbl.domain.Email" >
+   		select    mailid,
+	            userId,
+	            `from`,
+	            from_alias,
+	           `to`,
+	            cc,
+	            reply,
+	            subject,
+	            bodySize,
+	            max(comment) as comment,
+	            maildate,
+	            status, 
+	            sentTime,
+	            email_type ,
+	            modify_time,
+	            destination,
+	            origin_id 
+   			
+   			from 
+   			( select id as mailid,
+	           user_id as userId,
+	           `from` as `from`,
+	           from_alias,
+	           `to` as `to`,
+	           cc as cc,
+	           reply as reply,
+	           subject as subject,
+	           body_size as bodySize,
+	           '0' as comment,
+	           maildate as maildate,
+	           status as status,sent_time as sentTime,email_type ,modify_time,destination,origin_id 
+	        from txtbl_email_sent
+	          where  `from` =  #original_account#
+	          and user_id = #user_id#
+	        union all
+	           select a.id as mailid,
+	           user_id as userId,
+	           `from` as `from`,
+	           max(from_alias) as from_alias,
+	           max(`to`) as `to`,
+	           max(cc) as cc,
+	           max(reply) as reply,
+	           max(subject) as subject,
+	           max(body_size) as bodySize,
+	           count(*) as comment,
+	           max(maildate) as maildate,
+	           max(status) as status,
+	           max(sent_time) as sentTime,
+	           max(email_type) as  email_type,
+	           max(modify_time) as modify_time,
+	           max(destination) as destination,
+	           max(origin_id) as origin_id 
+	        from txtbl_email_sent a,txtbl_sent_attachment b
+	          where  a.id = b.email_id
+	           and `from`=  #original_account#
+	          and user_id = #user_id# 
+	          group by a.id,user_id,`from`) a
+	          group by mailid,
+	            userId,
+	            `from`,
+	            from_alias,
+	           `to`,
+	            cc,
+	            reply,
+	            subject,
+	            bodySize,
+	              maildate,
+	            status, 
+	            sentTime,
+	            email_type ,
+	            modify_time,
+	            destination,
+	            origin_id 
+   			order by maildate desc
+           <isNotNull property="limit">
+               limit #limit#
+           </isNotNull>
+    </select>
+    
+    <select id="getSentAttachmentList" parameterClass="java.lang.String" resultClass="com.archermind.txtbl.domain.Attachment" >
+    	select email_id as emailId ,size  , name 
+    	from `txtbl_sent_attachment` 
+    	where email_id = #emailid#
+ 
+    </select>
+    
+   <select id="selectReceivedEmail" parameterClass="com.archermind.txtbl.domain.Account" resultClass="com.archermind.txtbl.domain.Email">
+	    <![CDATA[select id as mailid from txtbl_email_received  where user_id = #user_id# and  original_account = #name#]]>
+	</select>
+    
+    <delete id="delReceivedAttachment" parameterClass="java.lang.String">
+        delete from txtbl_received_attachment where email_id = #id#
+    </delete>
+
+    <delete id="delOriginalAttachment" parameterClass="java.lang.String">
+        delete from txtbl_original_attachment where email_id = #id#
+    </delete>
+
+     <delete id="delReceivedBody" parameterClass="java.lang.String">
+        delete from  txtbl_rcvmail_body where emailid = #id#
+    </delete>
+    
+     <delete id="delRecieved" parameterClass="com.archermind.txtbl.domain.Account">
+        <![CDATA[delete from  txtbl_email_received where user_id = #user_id# and  original_account = #name#]]>
+    </delete>
+     
+</sqlMap>

@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+	     	http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
+
+    <bean id="authenticator" class="com.archermind.txtbl.authenticator.Authenticator" abstract="true"/>
+    <bean id="imapAuthenticator" class="com.archermind.txtbl.authenticator.ImapAuthenticator" parent="authenticator"/>
+    <bean id="yahooImapAuthenticator" class="com.archermind.txtbl.authenticator.YahooImapAuthenticator" parent="imapAuthenticator"/>
+    <bean id="oauthAuthenticator" class="com.archermind.txtbl.authenticator.OauthAuthenticator" parent="imapAuthenticator"/>
+
+    <bean id="folderProvider" class="com.archermind.txtbl.validate.mailbox.abst.FolderProvider"/>
+    <bean id="allMailsFolderProvider" class="com.archermind.txtbl.validate.mailbox.abst.AllMailsFolderProvider" parent="folderProvider"/>
+
+	<bean id="smtp" class="com.archermind.txtbl.validate.mailbox.abst.impl.SMTPValidate" />
+	     	
+    <bean id="newpop3" class="com.archermind.txtbl.validate.mailbox.abst.impl.POP3Validate" />
+	
+    <bean id="newimap" class="com.archermind.txtbl.validate.mailbox.abst.impl.NewImapValidate">
+        <constructor-arg ref="imapAuthenticator"/>
+        <constructor-arg ref="folderProvider"/>
+    </bean>
+	
+    <bean id="newimapidle" class="com.archermind.txtbl.validate.mailbox.abst.impl.NewImapValidate">
+        <constructor-arg ref="imapAuthenticator"/>
+        <constructor-arg ref="folderProvider"/>
+    </bean>
+
+    <bean id="newgmailpop3" class="com.archermind.txtbl.validate.mailbox.abst.impl.POP3Validate" />
+	
+    <bean id="newyahooimap" class="com.archermind.txtbl.validate.mailbox.abst.impl.YahooIMAP4Validate">
+        <constructor-arg ref="yahooImapAuthenticator"/>
+        <constructor-arg ref="folderProvider"/>
+    </bean>
+	
+	<bean id="newmsp" class="com.archermind.txtbl.validate.mailbox.abst.impl.HotmailInt" />
+
+    <bean id="xobnipop3" class="com.archermind.txtbl.validate.mailbox.abst.impl.POP3Validate" />
+
+    <bean id="xobniimap" class="com.archermind.txtbl.validate.mailbox.abst.impl.NewImapValidate">
+        <constructor-arg ref="imapAuthenticator"/>
+        <constructor-arg ref="folderProvider"/>
+    </bean>
+
+    <bean id="xobniimapidle" class="com.archermind.txtbl.validate.mailbox.abst.impl.NewImapValidate">
+        <constructor-arg ref="imapAuthenticator"/>
+        <constructor-arg ref="allMailsFolderProvider"/>
+    </bean>
+
+    <bean id="xobnioauthidle" class="com.archermind.txtbl.validate.mailbox.abst.impl.OAuthValidate">
+        <constructor-arg ref="oauthAuthenticator"/>
+        <constructor-arg ref="allMailsFolderProvider"/>
+    </bean>
+
+    <bean id="xobniyahooimap" class="com.archermind.txtbl.validate.mailbox.abst.impl.YahooIMAP4Validate">
+        <constructor-arg ref="yahooImapAuthenticator"/>
+        <constructor-arg ref="folderProvider"/>
+    </bean>
+
+	<bean id="xobnimsp" class="com.archermind.txtbl.validate.mailbox.abst.impl.HotmailInt" />
+
+    <bean id="xobniactivesync" class="com.archermind.txtbl.validate.mailbox.abst.impl.ActiveSyncValidate" />
+
+    <bean id="newexchange" class="com.archermind.txtbl.validate.mailbox.abst.impl.MSExchangeValidate" />
+
+    <bean id="newgmailimap" class="com.archermind.txtbl.validate.mailbox.abst.impl.NewImapValidate">
+        <constructor-arg ref="imapAuthenticator"/>
+        <constructor-arg ref="folderProvider"/>
+    </bean>
+    
+    <bean id="twitter" class="com.archermind.txtbl.validate.mailbox.abst.impl.TwitterValidate" />
+
+    <bean id="activesync" class="com.archermind.txtbl.validate.mailbox.abst.impl.ActiveSyncValidate" />
+
+    <bean id="googlevoice" class="com.archermind.txtbl.validate.mailbox.abst.impl.GoogleVoiceValidate" />
+
+    <bean id="pique" class="com.archermind.txtbl.validate.mailbox.abst.impl.PiqueValidate" />
+</beans>

@@ -1,0 +1,33 @@
+#Tue Feb 21 19:56:04 EST 2012
+sourceHoverBackgroundColor=255,255,225
+content_assist_proposals_foreground=0,0,0
+spelling_locale_initialized=true
+spelling_ignore_urls=true
+content_assist_disabled_computers=org.eclipse.jdt.ui.javaAllProposalCategory\u0000org.eclipse.jdt.ui.javaNoTypeProposalCategory\u0000org.eclipse.jdt.ui.textProposalCategory\u0000org.eclipse.jdt.ui.javaTypeProposalCategory\u0000
+spelling_ignore_non_letters=true
+org.eclipse.jdt.ui.text.templates_migrated=true
+spelling_ignore_ampersand_in_properties=true
+useAnnotationsPrefPage=true
+eclipse.preferences.version=1
+org.eclipse.jface.textfont=1|Consolas|10.0|0|WINDOWS|1|0|0|0|0|0|0|0|0|1|0|0|0|0|Consolas;
+tabWidthPropagated=true
+org.eclipse.jdt.ui.editor.tab.width=
+spelling_ignore_single_letters=true
+fontPropagated=true
+org.eclipse.jdt.ui.text.custom_code_templates=<?xml version\="1.0" encoding\="UTF-8" standalone\="no"?><templates/>
+org.eclipse.jdt.ui.javadoclocations.migrated=true
+proposalOrderMigrated=true
+spelling_user_dictionary_encoding=
+spelling_ignore_mixed=true
+spelling_ignore_java_strings=true
+org.eclipse.jdt.ui.formatterprofiles.version=12
+content_assist_proposals_background=255,255,255
+org.eclipse.jdt.internal.ui.navigator.layout=2
+content_assist_number_of_computers=21
+spelling_ignore_digits=true
+spelling_ignore_upper=true
+useQuickDiffPrefPage=true
+org.eclipse.jdt.ui.text.custom_templates=<?xml version\="1.0" encoding\="UTF-8" standalone\="no"?><templates/>
+content_assist_lru_history=<?xml version\="1.0" encoding\="UTF-8" standalone\="no"?><history maxLHS\="100" maxRHS\="10"><lhs name\="com.vitechinc.v3.dates.Period"><rhs name\="com.vitechinc.v3.dates.Period"/></lhs><lhs name\="java.util.Collection"><rhs name\="java.util.ArrayList"/><rhs name\="java.util.Stack"/></lhs><lhs name\="java.lang.Iterable"><rhs name\="java.util.ArrayList"/><rhs name\="java.util.Stack"/></lhs><lhs name\="java.util.List"><rhs name\="java.util.ArrayList"/><rhs name\="java.util.Stack"/></lhs><lhs name\="com.vitechinc.v3.dao.PersonDAO"><rhs name\="com.vitechinc.v3.dao.PersonDAO"/></lhs><lhs name\="java.util.RandomAccess"><rhs name\="java.util.ArrayList"/><rhs name\="java.util.Stack"/></lhs><lhs name\="java.lang.Cloneable"><rhs name\="java.util.ArrayList"/><rhs name\="java.util.Stack"/></lhs><lhs name\="java.util.AbstractList"><rhs name\="java.util.ArrayList"/><rhs name\="java.util.Stack"/></lhs><lhs name\="java.util.AbstractCollection"><rhs name\="java.util.ArrayList"/><rhs name\="java.util.Stack"/></lhs><lhs name\="java.util.ArrayList"><rhs name\="java.util.ArrayList"/></lhs><lhs name\="java.io.Reader"><rhs name\="java.io.BufferedReader"/><rhs name\="java.io.InputStreamReader"/></lhs><lhs name\="java.lang.Readable"><rhs name\="java.io.BufferedReader"/><rhs name\="java.io.InputStreamReader"/></lhs><lhs name\="java.io.Closeable"><rhs name\="java.io.BufferedReader"/><rhs name\="java.io.InputStreamReader"/></lhs><lhs name\="java.lang.AutoCloseable"><rhs name\="java.io.BufferedReader"/><rhs name\="java.io.InputStreamReader"/></lhs><lhs name\="java.io.BufferedReader"><rhs name\="java.io.BufferedReader"/></lhs><lhs name\="java.lang.CharSequence"><rhs name\="java.lang.String"/></lhs><lhs name\="java.util.Vector"><rhs name\="java.util.Stack"/></lhs><lhs name\="java.util.Stack"><rhs name\="java.util.Stack"/></lhs><lhs name\="quantcast.dilip.codingTest.Graph"><rhs name\="quantcast.dilip.codingTest.Graph"/></lhs><lhs name\="java.lang.Throwable"><rhs name\="java.lang.Exception"/></lhs><lhs name\="java.lang.Exception"><rhs name\="java.lang.Exception"/></lhs><lhs name\="intentmedia.dilip.codingTest.Product"><rhs name\="intentmedia.dilip.codingTest.Product"/></lhs><lhs name\="intentmedia.dilip.codingTest.POSScanner"><rhs name\="intentmedia.dilip.codingTest.POSScanner"/></lhs><lhs name\="java.lang.Enum"><rhs name\="intentmedia.dilip.codingTest.Product"/></lhs></history>
+spelling_ignore_sentence=true
+org.eclipse.jdt.ui.text.code_templates_migrated=true

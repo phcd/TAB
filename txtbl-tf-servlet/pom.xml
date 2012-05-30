@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>com.archermind.txtbl</groupId>
+	<artifactId>txtbl-tf-servlet</artifactId>
+	<packaging>war</packaging>
+	<name>txtbl taskfactory servlet module</name>
+	<parent>
+		<groupId>com.archermind.txtbl</groupId>
+		<artifactId>taskfactory</artifactId>
+		<relativePath>../pom.xml</relativePath>
+		<version>es_v2.3.1</version>
+	</parent>
+	<!-- Denpendecies -->
+	<dependencies>
+		<dependency>
+			<groupId>${pom.groupId}</groupId>
+			<artifactId>txtbl-tf-core</artifactId>
+		</dependency>
+	</dependencies>
+     <build>
+        <plugins>
+          <plugin>
+            <artifactId>maven-war-plugin</artifactId>
+            <version>2.1-alpha-2</version>
+            <configuration>
+              <!-- In version 2.1-alpha-1, this was incorrectly named warSourceExcludes -->
+              <packagingExcludes>WEB-INF/lib/*.jar</packagingExcludes>
+              <archive>
+                <manifest>
+                  <addClasspath>true</addClasspath>
+                  <classpathPrefix>lib/</classpathPrefix>
+                </manifest>
+              </archive>
+            </configuration>
+          </plugin>
+        </plugins>
+    </build>
+</project>

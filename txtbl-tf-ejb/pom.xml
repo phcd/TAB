@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>com.archermind.txtbl</groupId>
+	<artifactId>txtbl-tf-ejb</artifactId>
+	<packaging>ejb</packaging>
+	<name>txtbl taskfactory ejb module</name>
+	<parent>
+		<groupId>com.archermind.txtbl</groupId>
+		<artifactId>taskfactory</artifactId>
+		<relativePath>../pom.xml</relativePath>
+		<version>es_v2.3.1</version>
+	</parent>
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-ejb-plugin</artifactId>
+				<configuration>
+					<ejbVersion>3.0</ejbVersion>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+	<!-- Denpendecies -->
+	<dependencies>
+		<dependency>
+			<groupId>${pom.groupId}</groupId>
+			<artifactId>txtbl-tf-core</artifactId>
+		</dependency>
+	</dependencies>
+</project>

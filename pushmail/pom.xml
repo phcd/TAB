@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <artifactId>pushmail</artifactId>
+    <packaging>ejb</packaging>
+    <name>pushmail</name>
+    <parent>
+        <groupId>com.archermind.txtbl</groupId>
+        <artifactId>txtbl-ejbs</artifactId>
+        <version>es_v2.3.1</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+    <dependencies>
+
+        <dependency>
+            <groupId>backport</groupId>
+            <artifactId>backport</artifactId>
+            <version>3.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>ehcache</groupId>
+            <artifactId>ehcache</artifactId>
+            <version>1.5.0</version>
+        </dependency>
+        <dependency>
+            <groupId>net.sf.jsr107cache</groupId>
+            <artifactId>jsr107cache</artifactId>
+            <version>1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.json.simple</groupId>
+            <artifactId>json_simple</artifactId>
+            <version>1.1</version>
+        </dependency>
+    </dependencies>
+</project>

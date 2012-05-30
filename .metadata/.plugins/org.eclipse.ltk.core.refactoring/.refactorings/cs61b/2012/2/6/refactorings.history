@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Rename package &apos;dilip.quantcast.codingTest&apos; to &apos;quantcast.dilip.codingTest&apos;&#x0D;&#x0A;- Original project: &apos;cs61b&apos;&#x0D;&#x0A;- Original element: &apos;cs61b/src/dilip.quantcast.codingTest&apos;&#x0D;&#x0A;- Renamed element: &apos;cs61b/src/quantcast.dilip.codingTest&apos;&#x0D;&#x0A;- Update references to refactored element&#x0D;&#x0A;- Update textual occurrences in comments and strings" description="Rename package &apos;dilip.quantcast.codingTest&apos;" flags="589830" hierarchical="false" id="org.eclipse.jdt.ui.rename.package" input="/src&lt;dilip.quantcast.codingTest" name="quantcast.dilip.codingTest" qualified="false" references="true" stamp="1329003087998" textual="false" version="1.0"/>
+</session>

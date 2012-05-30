@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "sql-map-2.dtd">
+
+<sqlMap namespace="SimCode">
+	<typeAlias alias="simCode" type="com.archermind.txtbl.domain.SimCode" />
+
+	<select id="loadAllSimCode" resultClass="simCode" parameterClass="java.util.HashMap">
+		select * 
+		from txtbl_device_simcode  
+		<dynamic prepend="where">
+	  	<isNotNull property="simCode">
+	    	sim_code = #simCode#
+	 	</isNotNull>
+	  	</dynamic>
+	</select>
+
+</sqlMap>

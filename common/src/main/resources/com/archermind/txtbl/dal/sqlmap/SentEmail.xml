@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "sql-map-2.dtd">
+
+<sqlMap namespace="SentEmail">
+<typeAlias alias="head" type="com.archermind.txtbl.domain.Email"/>
+	
+	<!--add by andy start -->
+	<insert id="addEmail" parameterClass="head">
+		<![CDATA[insert into txtbl_email_sent
+		(
+		  user_id,
+		  `from`,
+		  from_alias,
+		  `to`,
+		  cc,
+		  reply,
+		  subject,
+		  body_size,
+		  commnet,
+		  maildate,
+		  status,
+		  sent_time,
+		  origin_id,
+		  email_type,
+		  destination,
+		  bcc_flag,
+		  data_type
+		)
+     values(
+            #userId#,
+            #from#,
+            #from_alias#,
+            #to#,
+            #cc#,
+            #reply#,
+            #subject#,
+            #bodySize#,
+            #comment#,
+            now(),
+            #status#,
+            now(),
+            #origin_id#,
+            #email_type#,
+            #destination#,
+            #bcc_flag#,
+            #dataType#
+            )]]>
+	</insert>
+	<update id="modifyStatus" parameterClass="java.util.HashMap">
+	     update txtbl_email_sent
+	       
+	        set status=#status#,modify_time=now()
+	         
+	         <dynamic prepend="where">
+	           <isNotNull prepend="and" property="mailid">
+	                id=#mailid#
+	           </isNotNull>
+	           <isNotNull prepend="and" property="userId">
+	               user_id=#userId#
+	           </isNotNull>
+	         </dynamic>
+
+	</update>
+
+	<select id="getEmailBcc" parameterClass="java.util.HashMap" resultClass="head">
+	
+	  select email_id as mailid, bcc
+	  from  txtbl_email_sent_bcc
+	  where email_id = #mailid#
+	 
+	</select>
+	<!-- add by andy liu 2008-02-18 -->
+	<select id="getEmail" parameterClass="java.util.HashMap" resultClass="head">
+	  select
+	      id as mailid, 
+	      user_id as userId,
+		  `from` as `from`,
+		  from_alias,
+		  `to` as `to`,
+		  cc as cc,
+		  reply as reply,
+		  subject as subject,
+		  body_size as bodySize,
+		  commnet as `comment`,
+		  maildate as mailDate,
+		  status as status,
+          origin_id,
+          email_type,
+          destination,
+          bcc_flag,
+          sent_time as sentTime,
+          data_type as dataType
+	  from  txtbl_email_sent
+	  <dynamic prepend="where">
+	  <isNotNull property="emailid">
+	    id = #emailid#
+	  </isNotNull>
+	  </dynamic>
+	</select>
+	
+	<select id="selectSentAttachmentDate"  resultClass="head" parameterClass="java.lang.String">
+		<![CDATA[  select id as mailid  from txtbl_email_sent  where  sent_time < #date# order by id desc limit 0,1 ]]> 
+	</select> 
+	
+	<select id="selectSentEmailDate"  resultClass="head" parameterClass="java.lang.String">
+		<![CDATA[  select id as mailid  from txtbl_email_sent  where  sent_time < #date# ]]> 
+	</select> 
+
+	<select id="getSentEmail"   parameterClass="java.util.HashMap" resultClass="com.archermind.txtbl.domain.Email">
+		  select id as mailid,
+	             user_id as userId,
+	             `from` as `from`,
+	             from_alias,
+	             `to` as `to`,
+	              cc as cc,
+	              reply as reply,
+	              subject as subject,
+	              body_size as bodySize,
+	              status as status,
+	              maildate as maildate,
+	              modify_time as modify_time,
+	              destination,
+                  bcc_flag,
+                  sent_time as sentTime,
+                  data_type as dataType
+                
+	          from txtbl_email_sent
+	          where  user_id=#uuid#
+	           and id=#mailid#
+	</select> 
+	
+	<delete id="deleteSentAttachmentEmailId" parameterClass="java.lang.String">
+	<![CDATA[ delete from  txtbl_sent_attachment where email_id <= #id# ]]> 
+	</delete> 
+	  
+	<delete id="deleteSentHeadEmailId" parameterClass="java.lang.String">
+	<![CDATA[ delete from txtbl_email_sent where  id = #id#]]> 
+	</delete> 
+	
+	<delete id="deleteSentBodyEmailId" parameterClass="java.lang.String">
+	<![CDATA[ delete from txtbl_sentmail_body where emailid  = #id#  ]]> 
+	</delete> 
+	
+	<delete id="deleteSentBccEmailId" parameterClass="java.lang.String">
+	<![CDATA[ delete from txtbl_email_sent_bcc where email_id  = #id#  ]]> 
+	</delete> 
+	
+	<insert id="addEmailBcc" parameterClass="head">
+		<![CDATA[insert into txtbl_email_sent_bcc( email_id,bcc)
+     values(#mailid#,#bcc#)]]>
+	</insert>
+	
+</sqlMap>

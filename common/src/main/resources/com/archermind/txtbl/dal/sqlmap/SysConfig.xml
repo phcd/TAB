@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "sql-map-2.dtd">
+
+<sqlMap namespace="SystemConfig">
+    
+<typeAlias alias="config" type="com.archermind.txtbl.domain.SysConfig"/>
+    
+     <select id="getMailboxConfig" parameterClass="java.lang.String"  resultClass="com.archermind.txtbl.domain.SysConfig">
+        select id,name,value,description, configtype,need_notify
+        from txtbl_sys_config 
+        where configtype = '3' and name like #name# 
+    </select>
+    
+      <select id="getPeekConfig"  resultClass="com.archermind.txtbl.domain.SysConfig">
+        select id,name,value,description, configtype,need_notify
+        from txtbl_sys_config 
+        where configtype = '6'
+    </select>
+    
+    <select id="getConfig"  resultClass="com.archermind.txtbl.domain.SysConfig">
+        select 
+          id,name,value,description, configtype,need_notify
+        from txtbl_sys_config
+    </select>
+    
+     <update id="updateSystemParameters"  parameterClass="com.archermind.txtbl.domain.SysConfig">
+        update txtbl_sys_config set 
+        name=#name# ,
+        value=#value#, 
+        description= #description#, 
+        configtype=#configtype#,
+        need_notify = #need_notify#
+        where id=#id#
+    </update>
+    
+     <select id="getTaskFactoryParameter"  resultClass="com.archermind.txtbl.domain.SysConfig" parameterClass="java.lang.String">
+        select id,name,value,description, configtype,need_notify from txtbl_sys_config  where name=#name#
+    </select>
+    
+</sqlMap>

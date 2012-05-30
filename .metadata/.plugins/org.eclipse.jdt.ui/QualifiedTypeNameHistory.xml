@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<qualifiedTypeNameHistroy>
+<fullyQualifiedTypeName name="com.vitechinc.v3.dates.Period"/>
+<fullyQualifiedTypeName name="java.util.Date"/>
+<fullyQualifiedTypeName name="com.vitechinc.v3.dao.PersonDAO"/>
+<fullyQualifiedTypeName name="com.vitechinc.v3.dao.ValidationException"/>
+<fullyQualifiedTypeName name="java.sql.Connection"/>
+<fullyQualifiedTypeName name="java.sql.Array"/>
+<fullyQualifiedTypeName name="java.util.ArrayList"/>
+<fullyQualifiedTypeName name="hw.hw1.Nuke2"/>
+<fullyQualifiedTypeName name="java.io.BufferedReader"/>
+<fullyQualifiedTypeName name="java.io.InputStreamReader"/>
+<fullyQualifiedTypeName name="java.util.Stack"/>
+<fullyQualifiedTypeName name="quantcast.dilip.codingTest.CellGraph"/>
+<fullyQualifiedTypeName name="quantcast.dilip.codingTest.Graph"/>
+<fullyQualifiedTypeName name="java.lang.Integer"/>
+<fullyQualifiedTypeName name="java.lang.String"/>
+<fullyQualifiedTypeName name="quantcast.dilip.codingTest.GraphEvaluator"/>
+<fullyQualifiedTypeName name="quantcast.dilip.codingTest.Expression"/>
+<fullyQualifiedTypeName name="java.util.HashSet"/>
+<fullyQualifiedTypeName name="java.util.concurrent.CyclicBarrier"/>
+<fullyQualifiedTypeName name="java.util.Scanner"/>
+<fullyQualifiedTypeName name="java.net.URL"/>
+<fullyQualifiedTypeName name="java.util.HashMap"/>
+<fullyQualifiedTypeName name="intentmedia.dilip.codingTest.ProductSpec"/>
+<fullyQualifiedTypeName name="intentmedia.dilip.codingTest.PriceCalculator"/>
+<fullyQualifiedTypeName name="javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter.DEFAULT"/>
+<fullyQualifiedTypeName name="intentmedia.dilip.codingTest.POSScanner"/>
+<fullyQualifiedTypeName name="intentmedia.dilip.codingTest.Product"/>
+<fullyQualifiedTypeName name="java.util.List"/>
+<fullyQualifiedTypeName name="intentmedia.dilip.codingTest.Terminal"/>
+<fullyQualifiedTypeName name="java.lang.Exception"/>
+</qualifiedTypeNameHistroy>

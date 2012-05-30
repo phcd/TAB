@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "sql-map-2.dtd">
+
+<sqlMap namespace="RandomKey">
+    
+    <typeAlias alias="randomKey" type="com.archermind.txtbl.domain.RandomKey"/>
+    
+     <select id="getMaxRandomKey" resultClass="randomKey">
+    
+    	select * from txtbl_sys_key  where operator_time  = (select max(operator_time) from txtbl_sys_key)
+    		
+    </select>
+      
+    <select id="getRandomKey" parameterClass="java.lang.Integer" resultClass="randomKey">
+    
+      		select * 
+      		from txtbl_sys_key 
+      		where id = #iKey#
+      	 
+      		
+    </select>
+    
+</sqlMap>

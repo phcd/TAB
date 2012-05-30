@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "sql-map-2.dtd">
+
+<sqlMap namespace="PeekLocation">
+    
+    <insert id="addPeekLocation" parameterClass="com.archermind.txtbl.domain.PeekLocation">
+      <![CDATA[
+        insert 
+        into peek_location (
+          imei, 
+          cell_id, 
+          lac_id, 
+          mnc, 
+          mcc,
+          last_update_timestamp)
+        values (
+          #imei#,
+          #cellId#, 
+          #lacId#,
+          #mnc#, 
+          #mcc#,
+          #lastUpdateTimestamp#)
+      ]]>
+    </insert>
+    
+    <select id="getPeekLocation" parameterClass="java.util.HashMap" resultClass="com.archermind.txtbl.domain.PeekLocation">
+        select 
+          id as id, 
+          imei as imei, 
+          cell_id as cellId, 
+          lac_id as lacId, 
+          mnc as mnc, 
+          mcc as mcc,
+          last_update_timestamp as lastUpdateTimestamp
+        from peek_location
+          where
+          imei = #imei#
+    </select>
+    
+    <select id="getDeviceCodeForAccount" parameterClass="java.util.HashMap" resultClass="java.lang.String">
+      <![CDATA[
+        select 
+          device_code
+        from peek_location
+          where
+           a.name = #name#
+          and a.user_id=d.user_id
+      ]]>
+    </select>
+
+    <select id="getLastUpdateTimestampByUserId" parameterClass="java.util.HashMap" resultClass="java.lang.String">
+      <![CDATA[
+        select
+          last_update_timestamp as lastUpdateTimestamp
+        from peek_location p, txtbl_device d
+          where
+           d.device_code = p.imei
+           and d.user_id = #user_id#
+      ]]>
+    </select>
+
+
+    <update id="updatePeekLocation" parameterClass="com.archermind.txtbl.domain.PeekLocation">
+      <![CDATA[
+        update peek_location
+        set 
+          cell_id = #cellId#, 
+          lac_id = #lacId#,
+          mnc = #mnc#,
+          mcc = #mcc#,
+          last_update_timestamp = #lastUpdateTimestamp#
+        where 
+          id = #id#
+      ]]>
+    </update>
+
+</sqlMap>

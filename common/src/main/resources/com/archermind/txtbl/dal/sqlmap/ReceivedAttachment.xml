@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "sql-map-2.dtd">
+
+<sqlMap namespace="ReceivedAttachment">
+    <typeAlias alias="attachment" type="com.archermind.txtbl.domain.Attachment"/>
+
+
+    <delete id="del_original_attachement" parameterClass="java.lang.String">
+        <![CDATA[ delete from txtbl_original_attachment where email_id in (select id from txtbl_original_mail where mail_time < #mail_time#)]]>
+    </delete>
+
+    <!--add by andy liu start -->
+    <insert id="addAttachment" parameterClass="attachment">
+        <![CDATA[insert into txtbl_received_attachment(email_id,size,name,`comment`)
+           values(
+            #emailId#,
+            #size#,
+            #name#,
+            #comment#
+            )
+        ]]>
+        <selectKey keyProperty="id" resultClass="int">
+            select last_insert_id()
+        </selectKey>
+    </insert>
+
+    <select id="getAttachments" parameterClass="java.util.HashMap" resultClass="attachment">
+        <![CDATA[select id,email_id as emailId,
+	       name as name,
+	       size as size,
+	       `comment` as `comment`
+	from txtbl_received_attachment]]>
+        <dynamic prepend="where">
+            <isNotNull property="emailId">
+                email_id=#emailId#
+            </isNotNull>
+        </dynamic>
+    </select>
+
+    <!-- not used -->
+    <select id="getOriginalAttachments" parameterClass="java.util.HashMap" resultClass="attachment">
+        <![CDATA[select id,email_id as emailId,
+	       name as name,
+	       size as size,
+	       `comment` as `comment`
+	from txtbl_original_attachment]]>
+        <dynamic prepend="where">
+            <isNotNull property="emailId">
+                email_id=#emailId#
+            </isNotNull>
+        </dynamic>
+
+    </select>
+
+    <select id="getOriginalAttachmentFromReceivedAttachment" parameterClass="java.util.HashMap"
+            resultClass="com.archermind.txtbl.domain.OriginalReceivedAttachment">
+        <![CDATA[
+        select id,
+            email_id as emailId,
+	        name as name,
+	        saved_on_date as 'savedOnDate',
+	        processed_on_date as 'processedOnDate',
+	        size as size,
+	        location
+	    from txtbl_original_attachment
+        where email_id=#email_id#
+            and name = #name#
+            limit 1;
+        ]]>
+    </select>
+
+    <select id="getAttachmentData" parameterClass="java.util.HashMap" resultClass="attachment">
+        <![CDATA[select id,email_id as emailId,
+	       name as name,
+	       data
+	from txtbl_original_attachment]]>
+        <dynamic prepend="where">
+            <isNotNull property="emailId">
+                email_id=#emailId#
+            </isNotNull>
+        </dynamic>
+
+    </select>
+
+
+    <select id="getAttachment" parameterClass="java.util.HashMap" resultClass="attachment">
+        select a.email_id as emailId,
+        a.name as name,
+        a.data as data,
+        a.size as size,
+        a.comment as comment
+        from txtbl_received_attachment a, txtbl_email_received b
+        where a.email_id = b.id
+
+        <isNotEmpty prepend=" and " property="emailId">
+            <![CDATA[(a.email_id = #emailId#)]]>
+        </isNotEmpty>
+
+        <isNotEmpty prepend=" and " property="name">
+            <![CDATA[(a.name = #name#)]]>
+        </isNotEmpty>
+
+        <isNotEmpty prepend=" and " property="uuid">
+            <![CDATA[(b.user_id = #uuid#)]]>
+        </isNotEmpty>
+
+        <isNotEmpty prepend=" and " property="id">
+            <![CDATA[(a.id = #id#)]]>
+        </isNotEmpty>
+
+    </select>
+
+    <select id="getAttachmentHeaders" parameterClass="java.util.HashMap" resultClass="attachment">
+        select
+        a.email_id as emailId,
+        a.name as name,
+        a.size as size
+        from txtbl_received_attachment a, txtbl_email_received b
+        where a.email_id = b.id
+
+        <isNotEmpty prepend="and" property="userId">
+            b.user_id = #userId#
+        </isNotEmpty>
+
+        <isNotEmpty prepend="and" property="emailStatus">
+            b.status = #emailStatus#
+        </isNotEmpty>
+
+        <isNotEmpty prepend="and" property="startEmailId">
+            <![CDATA[(a.email_id >= #startEmailId#)]]>
+        </isNotEmpty>
+
+        <isNotEmpty prepend="and" property="endEmailId">
+            <![CDATA[(a.email_id <= #endEmailId#)]]>
+        </isNotEmpty>
+
+    </select>
+
+
+    <select id="getAttachmentName" parameterClass="java.util.HashMap" resultClass="java.lang.String">
+        <![CDATA[ select name from txtbl_received_attachment where id = #id#  ]]>
+    </select>
+
+</sqlMap>

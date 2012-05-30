@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "sql-map-2.dtd">
+
+<sqlMap namespace="Partner">
+
+    <select id="getPartnerById" parameterClass="java.lang.String" resultClass="com.archermind.txtbl.domain.Partner">
+        select id, name, status, client_id from partner where id=#id#
+    </select>
+
+</sqlMap>

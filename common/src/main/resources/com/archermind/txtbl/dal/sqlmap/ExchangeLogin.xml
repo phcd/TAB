@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "sql-map-2.dtd">
+
+<sqlMap namespace="ExchangeLogin">
+
+    <insert id="addExchangeLogin" parameterClass="com.archermind.txtbl.domain.ExchangeLogin">
+      <![CDATA[
+        insert
+        into txtbl_exchange_login (
+          account_name,
+          login_name )
+        values (
+          #accountName#,
+          #loginName#)
+      ]]>
+    </insert>
+
+    <select id="getExchangeLogin" parameterClass="java.util.HashMap" resultClass="com.archermind.txtbl.domain.ExchangeLogin">
+        select
+          id as id,
+          account_name as accountName,
+          login_name as loginName
+        from txtbl_exchange_login
+          where
+          account_name = #accountName#
+    </select>
+
+    <update id="updateExchangeLogin" parameterClass="com.archermind.txtbl.domain.ExchangeLogin">
+      <![CDATA[
+        update txtbl_exchange_login
+        set
+          login_name = #loginName#
+        where
+          account_name = #accountName#
+      ]]>
+    </update>
+
+</sqlMap>

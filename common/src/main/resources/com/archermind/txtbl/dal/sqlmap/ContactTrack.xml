@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "sql-map-2.dtd">
+
+<sqlMap namespace="ContactTrack">
+    
+    <typeAlias alias="contactTrack" type="com.archermind.txtbl.domain.ContactTrack"/>
+    
+    <insert id="addContactTrack" parameterClass="contactTrack">
+      <![CDATA[
+        insert into txtbl_contact_track ( user_id, name,start_time,`current_time`,current_seqno,status_message,comment)
+        values (#user_id#,#name#, now(),now(),#current_seqno#,#status_message#, #comment#)
+      ]]>
+    </insert>
+    
+    <select id="getContactTrack" parameterClass="java.util.HashMap" resultClass="contactTrack">
+        select *,now() as sys_time from txtbl_contact_track 	where  user_id = #user_id#  and name = #name# 
+    </select>
+        
+    <update id="modifyContactTrack" parameterClass="contactTrack">
+        update txtbl_contact_track
+        set  `current_time` = now(), 
+          	 current_seqno = #current_seqno#,
+          	 status_message = #status_message#, 
+          	 comment = #comment# 
+        where user_id = #user_id#
+          and name = #name#
+    </update>
+    
+    <delete id="removeContactTrack" parameterClass="java.util.HashMap">
+        delete from txtbl_contact_track   
+        where user_id = #user_id#
+        and name = #name#   
+    </delete>
+    
+</sqlMap>

@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "sql-map-2.dtd">
+
+<sqlMap namespace="GeoLocationServiceProvider">
+    
+    <insert id="addGeoLocationServiceProvider" parameterClass="com.archermind.txtbl.domain.GeoLocationServiceProvider">
+      <![CDATA[
+        insert 
+        into geo_loc_svc_provider (
+          `key`, 
+          name)
+        values (
+          #key#,
+          #name#)
+      ]]>
+    </insert>
+    
+    <select id="getGeoLocationServiceProviderById" parameterClass="java.util.HashMap" resultClass="com.archermind.txtbl.domain.GeoLocationServiceProvider">
+      <![CDATA[
+        select 
+          id as id, 
+          `key` as `key`, 
+          name as name
+        from geo_loc_svc_provider
+          where id = #id#
+      ]]>    
+    </select>
+        
+    <select id="getGeoLocationServiceProviderByKey" parameterClass="java.util.HashMap" resultClass="com.archermind.txtbl.domain.GeoLocationServiceProvider">
+      <![CDATA[
+        select 
+          id as id, 
+          `key` as `key`, 
+          name as name
+        from geo_loc_svc_provider
+          where `key` = #key#
+      ]]>
+    </select>
+        
+    <update id="updateGeoLocationServiceProvider" parameterClass="com.archermind.txtbl.domain.GeoLocationServiceProvider">
+      <![CDATA[
+        update geo_loc_svc_provider
+        set 
+          `key` = #key#, 
+          name = #name#
+        where 
+          id = #id#
+      ]]>
+    </update>
+
+</sqlMap>

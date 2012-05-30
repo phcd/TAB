@@ -1,0 +1,15 @@
+1329611451614	Encapsulate field 'pdtVolumeQty'
+1329611457884	Encapsulate field 'pdtVolumePrice'
+1329611492636	Rename field 'pdtPrice'
+1329611510091	Rename local variable 'price'
+1329669997350	Rename local variable 'i'
+1329670007982	Rename local variable 'c'
+1329670021021	Rename local variable 'count'
+1329672461208	Rename local variable 'cost'
+1329672538257	Rename local variable 'qty'
+1329672682377	Rename type 'Product'
+1329672687765	Rename type 'ProductSpec'
+1329673697748	Rename field 'values'
+1329833522188	Rename type 'PriceCalculator'
+1329833985237	Move compilation unit
+1329835249546	Move package

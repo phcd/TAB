@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "sql-map-2.dtd">
+
+<sqlMap namespace="CrmQueue">
+    
+    <typeAlias alias="crmQueue" type="com.archermind.txtbl.domain.CrmQueue"/>
+    
+    <insert id="addCrmQueue" parameterClass="crmQueue">
+      <![CDATA[
+        insert into txtbl_crm_queue (user_id,name,peek_account,device_code,sim_code,cmd,messages,status,server_id,create_time,comment) 
+		values (#user_id#,#name#,#peek_account#,#device_code#,#sim_code#,#cmd#,#messages#,#status#,#server_id#,now(),#comment#)
+      ]]>
+    </insert>
+    
+    <select id="getCrmQueue" parameterClass="java.util.HashMap" resultClass="crmQueue">
+        select * 
+        from txtbl_crm_queue 	
+        <dynamic prepend="where">
+          <isNotNull prepend="and" property="user_id">
+            user_id = #user_id#
+          </isNotNull>
+          <isNotNull prepend="and" property="name">
+           	name = #name# 
+          </isNotNull>
+        </dynamic>
+    </select>
+        
+    <delete id="removeCrmQueue" parameterClass="java.util.HashMap">
+        delete from txtbl_crm_queue 
+       <dynamic prepend="where">
+          <isNotNull prepend="and" property="user_id">
+            user_id = #user_id#
+          </isNotNull>
+          <isNotNull prepend="and" property="name">
+           	name = #name# 
+          </isNotNull>
+        </dynamic>  
+    </delete>
+    
+</sqlMap>

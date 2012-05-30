@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "sql-map-2.dtd">
+
+<sqlMap namespace="ReceivedEmailBody">
+<typeAlias alias="ebody" type="com.archermind.txtbl.domain.Body"/>
+	
+	<!--add by andy liu start -->
+	<insert id="addBody" parameterClass="ebody">
+	insert  into txtbl_rcvmail_body(emailid,data,comment)
+           values(
+            #emailid#,
+            #data#,
+            #comment#
+            )
+	</insert>
+	
+	<select id="getBody" parameterClass="java.util.HashMap" resultClass="ebody">
+	
+	 select emailid as emailid, 
+	       `data` as `data`,
+	       `comment` as `comment`
+	from txtbl_rcvmail_body a
+	where a.emailid = #emailid#
+
+	</select>
+	
+	
+    <!--add by andy liu end -->
+</sqlMap>

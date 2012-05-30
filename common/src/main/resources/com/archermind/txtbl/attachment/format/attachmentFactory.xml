@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+	     	http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
+	     	
+	<bean id="textFilter" class="com.archermind.txtbl.attachment.format.inte.impl.TextFilter" scope="singleton" />
+
+    <bean id="charSetDetector" class="com.archermind.txtbl.attachment.format.inte.impl.CharSetDetector" scope="singleton" />
+
+    <bean id="jpgResizer" class="com.archermind.txtbl.attachment.format.inte.impl.JPGResizer"/>
+
+    <bean id="jpg" class="com.archermind.txtbl.attachment.format.inte.impl.JPGFormatImpl" />
+
+	<bean id="jpeg" class="com.archermind.txtbl.attachment.format.inte.impl.JPGFormatImpl" />
+	     	
+	<bean id="bmp" class="com.archermind.txtbl.attachment.format.inte.impl.JPGFormatImpl" />
+	
+	<bean id="png" class="com.archermind.txtbl.attachment.format.inte.impl.PNGFormatImpl" />
+	
+	<bean id="gif" class="com.archermind.txtbl.attachment.format.inte.impl.GIFFormatImpl" />
+	
+	<bean id="doc" class="com.archermind.txtbl.attachment.format.inte.impl.DOCFormatImpl">
+        <constructor-arg ref="textFilter"/>
+    </bean>
+
+	<bean id="rtf" class="com.archermind.txtbl.attachment.format.inte.impl.RTFFormatImpl">
+        <constructor-arg ref="textFilter"/>
+    </bean>
+	
+	<bean id="pdf" class="com.archermind.txtbl.attachment.format.inte.impl.PDFFormatImpl">
+        <constructor-arg ref="textFilter"/>
+    </bean>
+	
+	<bean id="xls" class="com.archermind.txtbl.attachment.format.inte.impl.XLSFormatImpl">
+        <constructor-arg ref="textFilter"/>
+    </bean>
+	
+	<bean id="txt" class="com.archermind.txtbl.attachment.format.inte.impl.TXTFormatImpl">
+        <constructor-arg ref="textFilter"/>
+        <constructor-arg ref="charSetDetector"/>
+    </bean>
+
+    <bean id="xlsx" class="com.archermind.txtbl.attachment.format.inte.impl.XLSXFormatImpl">
+        <constructor-arg ref="textFilter"/>
+    </bean>
+
+    <bean id="docx" class="com.archermind.txtbl.attachment.format.inte.impl.DOCXFormatImpl">
+        <constructor-arg ref="textFilter"/>
+    </bean>
+
+    <bean id="ppt" class="com.archermind.txtbl.attachment.format.inte.impl.PPTFormatImpl">
+        <property name="imageResizer" ref="jpgResizer" />
+    </bean>
+    
+</beans>

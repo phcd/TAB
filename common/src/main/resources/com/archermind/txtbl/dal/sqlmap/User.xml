@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "sql-map-2.dtd">
+
+<sqlMap namespace="User">
+    <typeAlias alias="user" type="com.archermind.txtbl.domain.User"/>
+
+
+    <cacheModel id="UsergetPeekAccountId-cache-LRU" type="LRU">
+        <flushInterval minutes="10"/>
+        <flushOnExecute statement="User.getPeekAccountIdByID"/>
+        <property name="size" value="1000"/>
+    </cacheModel>
+
+    <insert id="addUser" parameterClass="user">
+        <![CDATA[
+        insert 
+        into txtbl_user (
+          
+          peek_account,
+          registe_time, 
+          status, 
+          alias, 
+          firstname, 
+          lastname, 
+          middlename, 
+          gender, 
+          birthday, 
+          description, 
+          comment,
+          country, partner_code)
+        values (
+          
+          #peek_account#,
+          now(), 
+          #status#, 
+          #alias#, 
+          #firstname#, 
+          #lastname#, 
+          #middlename#, 
+          #gender#, 
+          #birthday#, 
+          #description#, 
+          #comment#,
+          #country#, #partnerCode#)
+      ]]>
+    </insert>
+
+    <update id="modifyStatus" parameterClass="java.util.HashMap">
+        <![CDATA[
+        update txtbl_user 
+        set 
+          status = #status# 
+        where 
+          id = #id#
+      ]]>
+    </update>
+
+
+    <select id="getUserMaxId" resultClass="java.lang.String">
+        select max(id) from txtbl_user
+    </select>
+
+    <delete id="removePeek02" parameterClass="java.lang.String">
+
+        delete from txtbl_contact where user_id=#id#
+
+    </delete>
+
+    <select id="selectSentEmail" parameterClass="java.lang.String" resultClass="com.archermind.txtbl.domain.Email">
+        select id as mailid from txtbl_email_sent where user_id=#id#
+    </select>
+
+    <delete id="removePeekSentBcc" parameterClass="java.lang.String">
+
+        delete from txtbl_email_sent_bcc where email_id = #id#
+
+    </delete>
+
+    <delete id="removePeek03" parameterClass="java.lang.String">
+
+        delete from txtbl_sent_attachment where email_id = #id#
+
+    </delete>
+    <delete id="removePeek04" parameterClass="java.lang.String">
+
+        delete from txtbl_sentmail_body where emailid = #id#
+
+    </delete>
+    <delete id="removePeek05" parameterClass="java.lang.String">
+
+        delete from txtbl_email_sent where user_id=#id#
+
+    </delete>
+
+
+    <select id="selectReceivedEmail" parameterClass="java.lang.String" resultClass="com.archermind.txtbl.domain.Email">
+        <![CDATA[select id as mailid from txtbl_email_received  where user_id = #id#]]>
+
+    </select>
+    <delete id="removePeek06" parameterClass="java.lang.String">
+
+        delete from txtbl_received_attachment where email_id = #id#
+
+    </delete>
+    <delete id="removePeek07" parameterClass="java.lang.String">
+
+        delete from txtbl_rcvmail_body where emailid = #id#
+
+    </delete>
+    <delete id="removePeek08" parameterClass="java.lang.String">
+
+        delete from txtbl_email_received where user_id=#id#
+
+    </delete>
+
+    <delete id="removePeek09" parameterClass="java.lang.String">
+
+        delete from txtbl_device where user_id = #id#
+
+    </delete>
+
+    <delete id="removePeek11" parameterClass="java.lang.String">
+
+        delete from txtbl_original_attachment where email_id = #id#
+
+    </delete>
+
+    <delete id="removeUser" parameterClass="java.lang.String">
+        delete from txtbl_user where id=#id#
+    </delete>
+
+
+    <select id="getPeekAccountIdByID" parameterClass="java.lang.String" resultClass="com.archermind.txtbl.domain.User"
+            cacheModel="UsergetPeekAccountId-cache-LRU">
+        select id,peek_account, registe_time, status, alias, firstname, lastname, middlename, gender,
+        birthday, description,change_flag, comment, country, partner_code as partnerCode from txtbl_user where id=#id#
+    </select>
+
+
+    <select id="getPeekAccountIdByPeek_account" parameterClass="java.lang.String"
+            resultClass="com.archermind.txtbl.domain.User">
+        select id,peek_account, registe_time, status, alias, firstname, lastname, middlename, gender,
+        birthday, description, change_flag, comment, country, partner_code as partnerCode from txtbl_user where
+        peek_account=#peek_account#
+    </select>
+
+    <select id="getPeekUserIdByEmailAndImei" parameterClass="java.util.HashMap"
+            resultClass="com.archermind.txtbl.domain.User">
+        select txtbl_user.id, peek_account, registe_time, txtbl_user.status, alias, firstname, lastname,
+        middlename,gender, birthday, description, change_flag, txtbl_user.comment, country, partner_code as partnerCode
+        from txtbl_user
+        inner join txtbl_email_account on txtbl_user.id = txtbl_email_account.user_id
+        inner join txtbl_device on txtbl_user.id = txtbl_device.user_id
+        where txtbl_email_account.name = #email# and txtbl_device.device_code = #imei#;
+    </select>
+
+    <update id="modifyChangeFlag" parameterClass="java.util.HashMap">
+        <![CDATA[
+        update txtbl_user 
+        set change_flag = #change_flag# 
+        where id = #id#
+      ]]>
+    </update>
+
+    <select id="getCurDateHistoyUserid" parameterClass="java.util.HashMap" resultClass="user">
+        <![CDATA[  select id from txtbl_user_history
+         			where opertor_time >= #beginCurrentDay#  
+         			and opertor_time <= #endCurrentDay# 
+         			]]>
+    </select>
+
+    <update id="modifyUserFeatures" parameterClass="java.util.HashMap">
+        <![CDATA[
+        update txtbl_user 
+        set comment = #featurs# 
+        where id = #id#
+      ]]>
+    </update>
+
+    <select id="getCountry" parameterClass="java.lang.String" resultClass="java.lang.String">
+        select country from txtbl_user where id = #userId#;
+    </select>
+
+</sqlMap>

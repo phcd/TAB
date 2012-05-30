@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "sql-map-2.dtd">
+
+<sqlMap namespace="ApiKey">
+
+    <insert id="addApiKey" parameterClass="com.archermind.txtbl.domain.ApiKey">
+        <![CDATA[
+        insert
+        into apikey (
+          access_key,
+          secret_access_key,
+          status,
+          user_id)
+        values (
+          #access_key#,
+          #secret_access_key#,
+          #status#,
+          #user_id#
+          )
+      ]]>
+    </insert>
+
+    <select id="getApiKeyById" parameterClass="java.lang.String" resultClass="com.archermind.txtbl.domain.ApiKey">
+        select id, access_key, secret_access_key, client_id, status, user_id from apikey where id=#id#
+    </select>
+
+    <select id="getApiKeyByAccessKey" parameterClass="java.lang.String"
+            resultClass="com.archermind.txtbl.domain.ApiKey">
+        select id, access_key, secret_access_key, client_id, status, user_id from apikey where access_key=#access_key#
+    </select>
+
+    <delete id="deleteApiKeyByUserId" parameterClass="java.lang.String">
+        delete from apikey where user_id=#user_id#
+    </delete>
+
+</sqlMap>

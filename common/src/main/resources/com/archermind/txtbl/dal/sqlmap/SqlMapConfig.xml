@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE sqlMapConfig PUBLIC "-//ibatis.apache.org//DTD SQL Map Config 2.0//EN" "sql-map-config-2.dtd">
+
+<sqlMapConfig>
+
+    <!--properties resource="com/archermind/txtbl/dal/sqlmap/DataBase.properties"/-->
+
+    <settings
+            cacheModelsEnabled="true"
+            lazyLoadingEnabled="true"
+            errorTracingEnabled="true"
+
+            maxSessions="1024"
+            maxTransactions="512"
+            maxRequests="2048"
+            useStatementNamespaces="true"
+            enhancementEnabled="false"
+            />
+
+
+    <!--
+     <transactionManager type="JDBC">
+         <dataSource type="SIMPLE">
+
+             <property name="JDBC.Driver" value="com.mysql.jdbc.Driver" />
+             <property name="JDBC.ConnectionURL" value="jdbc:mysql://192.168.12.202/txtbl_test?useUnicode=true&amp;characterEncoding=UTF-8" />
+             <property name="JDBC.Username" value="root" />
+             <property name="JDBC.Password" value="123456" />
+             <property name="Pool.MaximumActiveConnections" value="300" />
+             <property name="Pool.MaximumIdleConnections" value="150" />
+             <property name="Pool.MaximumCheckoutTime" value="20000" />
+             <property name="Pool.TimeToWait" value="6000" />
+             <property name="Pool.PingEnabled" value="false" />
+             <property name="Pool.PingConnectionsOlderThan" value="0" />
+             <property name="Pool.PingConnectionsNotUsedFor" value="0" />
+             <property name="Pool.LogAbandoned" value="false"/>
+             <property name="Pool.MaximumWait" value="60000"/>
+             <property name="Pool.LogAbandoned" value="false"/>
+             <property name="Pool.RemoveAbandoned" value="false"/>
+             <property name="Pool.RemoveAbandonedTimeout" value="50000"/>
+
+         </dataSource>
+     </transactionManager>
+         -->
+
+    <!--
+    <transactionManager type="JDBC" commitRequired="false">
+		<dataSource type="SIMPLE">
+		    <property name="JDBC.Driver" value="${driver}" />
+            <property name="JDBC.ConnectionURL" value="${url}" />
+            <property name="JDBC.Username" value="${user}" />
+            <property name="JDBC.Password" value="${pword}" />
+		</dataSource>
+	</transactionManager>
+    -->
+
+    <transactionManager type="EXTERNAL" commitRequired="false">
+        <property name="DefaultAutoCommit" value="false"/>
+        <property name="SetAutoCommitAllowed" value="false"/>
+        <dataSource type="JNDI">
+            <property name="DataSource" value="${DataSourceJNDI}"/>
+        </dataSource>
+    </transactionManager>
+
+    <sqlMap resource="com/archermind/txtbl/dal/sqlmap/Account.xml"/>
+    <sqlMap resource="com/archermind/txtbl/dal/sqlmap/Contact.xml"/>
+    <sqlMap resource="com/archermind/txtbl/dal/sqlmap/Device.xml"/>
+    <sqlMap resource="com/archermind/txtbl/dal/sqlmap/Global.xml"/>
+    <sqlMap resource="com/archermind/txtbl/dal/sqlmap/MailServer.xml"/>
+    <sqlMap resource="com/archermind/txtbl/dal/sqlmap/User.xml"/>
+    <sqlMap resource="com/archermind/txtbl/dal/sqlmap/SysConfig.xml"/>
+    <sqlMap resource="com/archermind/txtbl/dal/sqlmap/PeekdomUser.xml"/>
+    <!-- add by andy start -->
+    <!-- email body -->
+    <sqlMap resource="com/archermind/txtbl/dal/sqlmap/ReceivedEmailBody.xml"/>
+    <sqlMap resource="com/archermind/txtbl/dal/sqlmap/SentEmailBody.xml"/>
+    <!-- email head -->
+    <sqlMap
+            resource="com/archermind/txtbl/dal/sqlmap/ReceivedEmail.xml"/>
+    <sqlMap resource="com/archermind/txtbl/dal/sqlmap/SentEmail.xml"/>
+    <!-- email attachment -->
+    <sqlMap
+            resource="com/archermind/txtbl/dal/sqlmap/ReceivedAttachment.xml"/>
+    <sqlMap
+            resource="com/archermind/txtbl/dal/sqlmap/SentAttachment.xml"/>
+    <!-- add by andy end -->
+    <sqlMap
+            resource="com/archermind/txtbl/dal/sqlmap/TxtblWebService.xml"/>
+    <sqlMap
+            resource="com/archermind/txtbl/dal/sqlmap/SimCode.xml"/>
+    <sqlMap
+            resource="com/archermind/txtbl/dal/sqlmap/ContactTrack.xml"/>
+    <sqlMap
+            resource="com/archermind/txtbl/dal/sqlmap/MspToken.xml"/>
+    <sqlMap
+            resource="com/archermind/txtbl/dal/sqlmap/CrmQueue.xml"/>
+    <sqlMap
+            resource="com/archermind/txtbl/dal/sqlmap/ContentServiceProvider.xml"/>
+    <sqlMap
+            resource="com/archermind/txtbl/dal/sqlmap/ContentServiceSubscriber.xml"/>
+    <sqlMap
+            resource="com/archermind/txtbl/dal/sqlmap/GeoLocationServiceProvider.xml"/>
+    <sqlMap
+            resource="com/archermind/txtbl/dal/sqlmap/PeekLocation.xml"/>
+    <sqlMap
+            resource="com/archermind/txtbl/dal/sqlmap/ExchangeLogin.xml"/>
+    <sqlMap
+            resource="com/archermind/txtbl/dal/sqlmap/RandomKey.xml"/>
+
+    <!-- added by Alex -->
+    <sqlMap
+            resource="com/archermind/txtbl/dal/sqlmap/ApiKey.xml"/>
+    <sqlMap
+            resource="com/archermind/txtbl/dal/sqlmap/Client.xml"/>
+    <sqlMap
+            resource="com/archermind/txtbl/dal/sqlmap/ClientFeature.xml"/>
+    <sqlMap
+            resource="com/archermind/txtbl/dal/sqlmap/Partner.xml"/>
+
+</sqlMapConfig>

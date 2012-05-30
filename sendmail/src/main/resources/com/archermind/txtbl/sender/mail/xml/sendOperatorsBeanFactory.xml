@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+	     	http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
+    
+    <bean id="smtp" class="com.archermind.txtbl.sender.mail.abst.impl.SMTPOperator" />
+	
+    <bean id="localsmtp" class="com.archermind.txtbl.sender.mail.abst.impl.LocalSMTPOperator" />
+	
+	<bean id="yahoo" class="com.archermind.txtbl.sender.mail.abst.impl.YahooOperator" />  
+	
+    <bean id="msp" class="com.archermind.txtbl.sender.mail.abst.impl.HotmailOperatorMsp" />
+
+    <bean id="newmsp" class="com.archermind.txtbl.sender.mail.abst.impl.HotmailOperatorMsp" />
+
+    <bean id="newexchange" class="com.archermind.txtbl.sender.mail.abst.impl.MSExchangeOperator" />
+
+    <bean id="exchange" class="com.archermind.txtbl.sender.mail.abst.impl.MSExchangeOperator" />
+
+    <bean id="twitter" class="com.archermind.txtbl.sender.mail.abst.impl.TwitterOperator" />
+
+    <bean id="googlevoice" class="com.archermind.txtbl.sender.mail.abst.impl.GoogleVoiceOperator" />
+
+    <bean id="activesync" class="com.archermind.txtbl.sender.mail.abst.impl.ActiveSyncOperator" >
+        <property name="deviceId" value="Appl8C808MH40JW"/>
+        <property name="deviceType" value="PEEK"/>
+    </bean>
+
+    <bean id="twitterpeek" class="com.archermind.txtbl.sender.mail.abst.impl.TwitterOperator" />
+
+     <bean id="pique" class="com.archermind.txtbl.sender.mail.abst.impl.PiqueOperator" />
+
+</beans>

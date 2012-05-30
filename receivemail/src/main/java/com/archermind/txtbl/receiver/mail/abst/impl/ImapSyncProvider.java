@@ -1,0 +1,330 @@
+package com.archermind.txtbl.receiver.mail.abst.impl;
+
+import com.archermind.txtbl.authenticator.Authenticator;
+import com.archermind.txtbl.dal.DALException;
+import com.archermind.txtbl.domain.Account;
+import com.archermind.txtbl.exception.SystemException;
+import com.archermind.txtbl.mail.store.MessageStoreException;
+import com.archermind.txtbl.receiver.mail.abst.Provider;
+import com.archermind.txtbl.receiver.mail.dal.DALDominator;
+import com.archermind.txtbl.receiver.mail.support.FolderHelper;
+import com.archermind.txtbl.receiver.mail.support.FolderHelperFactory;
+import com.archermind.txtbl.receiver.mail.support.NewProviderSupport;
+import com.archermind.txtbl.receiver.mail.utils.ProviderStatistics;
+import com.archermind.txtbl.sync.IMAPSyncUtil;
+import com.archermind.txtbl.utils.*;
+import com.sun.mail.imap.IMAPFolder;
+import com.sun.mail.imap.IMAPMessage;
+import org.jboss.logging.Logger;
+
+import javax.mail.Folder;
+import javax.mail.Message;
+import javax.mail.MessagingException;
+import javax.mail.Store;
+import javax.mail.search.AndTerm;
+import javax.mail.search.ComparisonTerm;
+import javax.mail.search.ReceivedDateTerm;
+import javax.mail.search.SearchTerm;
+import java.util.*;
+
+public class ImapSyncProvider implements Provider
+{
+    private static final Logger log = Logger.getLogger(ImapSyncProvider.class);
+    protected static ProviderStatistics statistics = new ProviderStatistics();
+
+    private Map<String, Integer> hoursToGoBackInSearch = new HashMap<String, Integer>();
+
+    NewProviderSupport support;
+    Authenticator authenticator;
+
+    public ImapSyncProvider(NewProviderSupport support, Authenticator authenticator)
+    {
+        this.support = support;
+        this.authenticator = authenticator;
+    }
+
+    public int receiveMail(final Account account)
+    {
+        String context = String.format("account=%s, uid=%s, email=%s", account.getId(), account.getUser_id(), account.getName());
+
+        StopWatch watch = new StopWatch("mailcheck " + context);
+
+
+        log.info(String.format("receiving email %s", context));
+
+        int newMessages = 0;
+        int folderDepth = 0;
+
+        Folder folder = null;
+
+        try
+        {
+            StopWatchUtils.newTask(watch, "loadAccountLatestReceiveInfo", context, log);
+            if (!DALDominator.loadAccountLatestReceiveInfo(account))
+            {
+                log.warn(String.format("account has been removed by email checks continue for %s", context));
+                // this means that we can't find account anymore - probably to do with deletion
+                return 0;
+            }
+
+            if (support.exceededMaximumLoginFailures(account))
+            {
+                log.info(String.format("exceeded maximum login failures with %d attempts for %s", account.getLogin_failures(), context));
+                return 0;
+            }
+            StopWatchUtils.newTask(watch, "getStoreMessages", context, log);
+            Set<String> storedMessageIds = support.getMessageIdStore().getMessages(account.getId(), account.getCountry(), context, watch);
+
+            folder = authenticator.connect(account, context, watch, support, account.getFolderNameToConnect());
+            if (folder == null)
+            {
+                log.info(String.format("unable to connect for %s", context));
+                return 0;
+            }
+
+            StopWatchUtils.newTask(watch, "getFolderDepth", context, log);
+            FolderHelper folderHelper = FolderHelperFactory.getFolderHelper(account, folder);
+            folderDepth = folderHelper.getFolderDepth();
+
+            account.setFolder_depth(folderDepth);
+
+            StopWatchUtils.newTask(watch, "getMessageStoreBucket", context, log);
+            String messageStoreBucket = support.getMessageIdStore().getBucket(account.getId()); // calculate once
+
+            boolean isFirstTime = isFirstTime(account);
+            boolean migratedAccount = isMigratedAccount(account);
+
+
+            if (isFirstTime)
+            {
+                StopWatchUtils.newTask(watch, "handleFirstTime", context, log);
+                newMessages = handleFirstTime(account, folder, messageStoreBucket, storedMessageIds, folderDepth, folderHelper, context, watch);
+            } else if (migratedAccount)
+            {
+                StopWatchUtils.newTask(watch, "handleMigratedAccount", context, log);
+                handleMigratedAccount(account, folder, folderDepth, messageStoreBucket, context);
+            } else
+            {
+                StopWatchUtils.newTask(watch, "getMessages", context, log);
+                newMessages = getMessages(account, folder, messageStoreBucket, folderDepth, folderHelper, context, watch);
+
+                //now go syncUtil read/unread/delete
+                StopWatchUtils.newTask(watch, "syncMessages", context, log);
+                //TODO: #ME Decide what to do with the bool generated by this method call
+                IMAPSyncUtil syncUtil = new IMAPSyncUtil();
+                syncUtil.syncEmails(account, folder, context);
+
+            }
+
+
+        } catch (Throwable e)
+        {
+            throw new SystemException(String.format("unexpected failure during receive mail for %s", context), e);
+        } finally
+        {
+            StopWatchUtils.newTask(watch, String.format("closeConnection (%d new mails, %d in folder)", newMessages, folderDepth), context, log);
+
+            //TODO: refactor into authenticator
+            if (folder != null)
+            {
+                FinalizationUtils.close(folder);
+                Store store = folder.getStore();
+                FinalizationUtils.close(store);
+            }
+
+            StopWatchUtils.newTask(watch, "logMailCheckEvent", context, log);
+
+            watch.stop();
+
+            log.info(ReceiverUtilsTools.printWatch(watch, folderDepth, newMessages, false));
+
+            String summary = statistics.enterStats(ImapSyncProvider.class.getName(), folderDepth, newMessages, watch.getTotalTimeMillis());
+            log.info(String.format("completed mailcheck for %s, folderDepth=%d, newMessages=%d time=%sms [%s]", context, folderDepth, newMessages, watch.getTotalTimeMillis(), summary));
+        }
+
+        return newMessages;
+    }
+
+    private boolean isMigratedAccount(Account account)
+    {
+        return support.isMigratedAccount(account);
+    }
+
+    protected boolean isFirstTime(Account account)
+    {
+        return support.isFirstTime(account);
+    }
+
+    private int getMessages(Account account, Folder folder, String messageStoreBucket, int folderDepth, FolderHelper folderHelper, String context, StopWatch watch) throws Throwable
+    {
+        Date lastMessageReceivedDate = null;
+        int newMessages = 0;
+        IMAPFolder inbox = (IMAPFolder) folder;
+
+        AndTerm andTerm = new AndTerm(new SearchTerm[]{new ReceivedDateTerm(ComparisonTerm.GT, getDateOffset(account))});
+        try
+        {
+
+            log.info(String.format("searching with search term %s for %s", getDateOffset(account), context));
+
+            Message[] messages = inbox.search(andTerm);
+            int examined = messages.length;
+
+            StopWatchUtils.newTask(watch, "getMessageUIDs", context, log);
+            support.fetchIds(account, inbox, messages);
+
+            StopWatchUtils.newTask(watch, "getStoreMessages", context, log);
+            //TODO: #ME Uncomment the following line and delete line after that, for testing only
+            Set<String> storedMessageIds = support.getMessageIdStore().getMessages(account.getId(), account.getCountry(), context, watch);
+
+            if (log.isDebugEnabled())
+                log.debug(String.format("store bucket is %s for %s", messageStoreBucket, context));
+
+            StopWatchUtils.newTask(watch, "processMessages", context, log);
+
+            for (Message message : messages)
+            {
+                String messageId = String.valueOf(inbox.getUID(message));
+                //support.newTask(watch, String.format("msgNum=%s, getUID", message.getMessageNumber()), context);
+
+                Date messageDate = message.getReceivedDate();
+                if (message.getReceivedDate() == null)
+                {
+                    if (message.getSentDate() != null)
+                    {
+                        messageDate = message.getSentDate();
+
+                    }
+                }
+
+                if (support.processMessage(account, message, message.getMessageNumber(), messageId, inbox, storedMessageIds, messageStoreBucket, context, watch, folderHelper))
+                {
+                    if (lastMessageReceivedDate == null || lastMessageReceivedDate.before(messageDate))
+                    {
+                        lastMessageReceivedDate = messageDate;
+                    }
+
+                    newMessages++;
+
+                    if (newMessages > support.getMaximumMessagesToProcess())
+                    {
+                        break;
+                    }
+                }
+                //Added by Dan to clear high memory/caching by Javamail
+                ((IMAPMessage) message).invalidateHeaders();
+            }
+
+            StopWatchUtils.newTask(watch, "updateAccount", context, log);
+            support.updateAccount(account, null, newMessages, folderDepth, lastMessageReceivedDate);
+            log.info(String.format("message stats for %s, folderDepth=%d, newMessages=%d, examined=%d", context, folderDepth, newMessages, examined));
+
+        } catch (Throwable e) {
+            //check for search error so we can get log of it
+            if (e.getMessage().contains("A5 BAD SEARCH")) {
+                log.error(String.format("error while searching with search term %s for %s", andTerm.toString(), context));
+            }
+            throw e;
+        }
+        return newMessages;
+    }
+
+    private int handleFirstTime(Account account, Folder folder, String messageStoreBucket, Set<String> storedMessageIds, int folderDepth, FolderHelper folderHelper, String context, StopWatch watch) throws Exception {
+        int newMessages = support.handleFirstTime(account, folderHelper, folderDepth, messageStoreBucket, storedMessageIds, context, watch);
+
+        if (support.shouldProcessMigrated()) {
+            // store last 1 day worth of IDs
+            handleMigratedAccount(account, folder, folderDepth, messageStoreBucket, context);
+        }
+
+        log.info(String.format("handled first mailcheck for %s - %s messages", context, newMessages));
+
+        return newMessages;
+    }
+
+
+    /**
+     * @param folder
+     * @param account
+     * @param bucket
+     * @throws javax.mail.MessagingException
+     * @throws com.archermind.txtbl.mail.store.MessageStoreException
+     *
+     */
+    private void handleMigratedAccount(Account account, Folder folder, int folderDepth, String bucket, String context) throws MessagingException, MessageStoreException, DALException
+    {
+        IMAPFolder inbox = (IMAPFolder) folder;
+        int daysToGoBackOnMigration = Integer.parseInt(SysConfigManager.instance().getValue("imapMigrationDaysToGoBack", "1"));
+
+
+        Message[] messages = inbox.search(new AndTerm(new SearchTerm[]{new ReceivedDateTerm(ComparisonTerm.GT, new Date(System.currentTimeMillis() - 1000l * 60 * 60 * 24 * daysToGoBackOnMigration))}));
+
+        if (log.isDebugEnabled())
+            log.debug(String.format("found %d messages to add to id store as part of migration for %s", messages.length, context));
+
+        support.fetchIds(account, inbox, messages);
+
+        if (log.isDebugEnabled())
+            log.debug(String.format("fetched ids for migration eligible messages for %s", context));
+
+        List<String> ids = new ArrayList<String>();
+
+        Date lastMessageReceivedDate = null;
+
+        if (messages.length == 0)
+        {
+            lastMessageReceivedDate = new Date(System.currentTimeMillis());
+        } else
+        {
+            for (Message message : messages)
+            {
+                if (lastMessageReceivedDate == null || lastMessageReceivedDate.before(message.getReceivedDate()))
+                {
+                    lastMessageReceivedDate = message.getReceivedDate();
+                }
+
+                // the formatting below is necessary to stay consistent with POP bulk imports
+                ids.add(message.getMessageNumber() + " " + inbox.getUID(message));
+            }
+        }
+
+        support.getMessageIdStore().addMessageInBulk(account.getId(), bucket, IdUtil.encodeMessageIds(ids), account.getCountry());
+
+        if (log.isDebugEnabled())
+            log.debug(String.format("migrated messages with last receive date of %s for %s", lastMessageReceivedDate, context));
+
+        support.updateAccount(account, null, 0, folderDepth, lastMessageReceivedDate);
+        // migration case
+
+
+    }
+
+    /**
+     * Determines date offset of how far back to go in search
+     *
+     * @param account
+     * @return
+     */
+    public Date getDateOffset(Account account)
+    {
+        if (account.getLast_received_date() != null)
+        {
+            if (!hoursToGoBackInSearch.containsKey(account.getReceiveProtocolType()))
+            {
+                hoursToGoBackInSearch.put(account.getReceiveProtocolType(), Integer.valueOf(SysConfigManager.instance().getValue(account.getReceiveProtocolType() + ".hoursToBackInSearch", "4")));
+            }
+
+            int hours = hoursToGoBackInSearch.get(account.getReceiveProtocolType());
+
+            if (log.isDebugEnabled())
+                log.debug(String.format("imapHoursToBackInSearch=%d for protocol %s", hours, account.getReceiveProtocolType()));
+
+            return new Date(System.currentTimeMillis() - 1000l * 60 * 60 * hours);
+        } else
+        {
+            return account.getRegister_time();
+        }
+    }
+
+
+}

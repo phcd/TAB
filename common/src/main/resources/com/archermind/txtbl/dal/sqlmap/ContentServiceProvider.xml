@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "sql-map-2.dtd">
+
+<sqlMap namespace="ContentServiceProvider">
+    
+    <insert id="addContentServiceProvider" parameterClass="com.archermind.txtbl.domain.ContentServiceProvider">
+      <![CDATA[
+        insert 
+        into content_svc_provider (
+          geo_loc_svc_provider_id, 
+          cpid,
+          name,
+          opt_in_url,
+          opt_out_url)
+        values (
+          #geoLocationServiceProviderId#,
+          #cpid#,
+          #name#,
+          #optInUrl#,
+          #optOutUrl#)
+      ]]>
+    </insert>
+    
+    <select id="getContentServiceProviderById" parameterClass="java.util.HashMap" resultClass="com.archermind.txtbl.domain.ContentServiceProvider">
+        select 
+          id as id,
+          geo_loc_svc_provider_id as geoLocationServiceProviderId, 
+          cpid as cpid,
+          name as name,
+          opt_in_url as optInUrl,
+          opt_out_url as optOutUrl
+        from content_svc_provider 
+          where id=#id#
+    </select>
+        
+    <select id="getContentServiceProviderByCpid" parameterClass="java.util.HashMap" resultClass="com.archermind.txtbl.domain.ContentServiceProvider">
+        select 
+          id as id, 
+          geo_loc_svc_provider_id as geoLocationServiceProviderId, 
+          cpid as cpid,
+          name as name,
+          opt_in_url as optInUrl,
+          opt_out_url as optOutUrl
+        from content_svc_provider
+          where cpid = #cpid# AND geo_loc_svc_provider_id = #geo_loc_svc_provider_id#
+    </select>
+        
+</sqlMap>

@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "sql-map-2.dtd">
+
+<sqlMap namespace="MailServer">
+    
+    <select id="getSentConfig" parameterClass="java.util.HashMap" resultClass="com.archermind.txtbl.domain.Server">
+       
+        select 
+          id as sent_id, 
+          name as name, 
+          status as status, 
+          send_host as sendHost, 
+          send_port as sendPort, 
+          send_protocol_type as sendProtocolType, 
+          send_ts as sendTs,
+		  fba_path as sendHostFbaPath,
+		  prefix as sendHostPrefix,        
+          need_auth as needAuth, 
+          level as sentLevel,
+          save_time,
+          <![CDATA[comment as comment]]> 
+        from txtbl_sys_sent 
+        <dynamic prepend="where">
+          <isNotNull prepend="and" property="name">
+            name = #name# 
+          </isNotNull>
+          <isNotNull prepend="and" property="status">
+            status = #status# 
+          </isNotNull>
+          <isNotNull prepend="and" property="id">
+            id = #id# 
+          </isNotNull>
+        </dynamic>
+        order by `name` ,`level` desc
+        
+    </select>
+        
+        
+        <select id="getConfig" parameterClass="java.util.HashMap" resultClass="com.archermind.txtbl.domain.Server">
+          
+        select 
+          id as id, 
+          name as name, 
+          status as status, 
+          receive_host as receiveHost, 
+          receive_port as receivePort, 
+          receive_protocol_type as receiveProtocolType, 
+          receive_ts as receiveTs, 
+          orderFlag as orderFlag,
+          level as level,
+          save_time,
+          <![CDATA[comment as comment]]>,
+          fba_path as receiveHostFbaPath,
+          prefix as receiveHostPrefix
+        from txtbl_sys_received 
+        <dynamic prepend="where">
+          <isNotNull prepend="and" property="name">
+            name = #name# 
+          </isNotNull>
+          <isNotNull prepend="and" property="status">
+            status = #status# 
+          </isNotNull>
+          <isNotNull prepend="and" property="id">
+            id = #id# 
+          </isNotNull>
+        </dynamic>
+        order by `name` ,`level` desc
+    </select>
+    <select id="getAllReceiveProtocolType"  resultClass="com.archermind.txtbl.domain.Server">
+        select distinct receive_protocol_type as receiveProtocolType  from txtbl_sys_received where receive_protocol_type <![CDATA[<>]]>  "" and receive_protocol_type is not null
+    </select>
+      
+      <select id="getSentServerConfig" parameterClass="java.lang.String"  resultClass="com.archermind.txtbl.domain.Server">
+        select  id as sent_id, 
+          name as name, 
+          status as status, 
+          send_host as sendHost, 
+          send_port as sendPort, 
+          send_protocol_type as sendProtocolType, 
+          send_ts as sendTs,
+          fba_path as sendHostFbaPath,
+          prefix as sendHostPrefix,
+          need_auth as needAuth, 
+          level as sentLevel,
+          save_time,
+          comment as comment 
+          from txtbl_sys_sent
+          where name =  #name# 
+          and status  = '1'
+          order by `name` ,`level` desc
+      </select>  
+    	<insert id="addSentServer" parameterClass="com.archermind.txtbl.domain.Server">
+		<![CDATA[
+			insert into txtbl_sys_sent(
+				name,
+				status,
+				send_host,
+				send_port,
+				send_protocol_type,
+				send_ts,
+				fba_path,
+				prefix,
+				need_auth,
+				comment,
+				level,
+				save_time)
+	        values(
+	        	#name#,
+	        	#status#,
+				#sendHost#,
+				#sendPort#,
+				#sendProtocolType#,
+				#sendTs#,
+				#sendHostFbaPath#,
+				#sendHostPrefix#,
+				#needAuth#,
+				#comment#,
+				#level#,
+				now())
+		]]>
+	</insert>
+	
+	
+     <select id="getMailServerConfig" parameterClass="java.lang.String" resultClass="com.archermind.txtbl.domain.Server">
+          
+				SELECT id AS id,
+				       name AS name,
+				       status AS status,
+				       receive_host AS receiveHost,
+				       receive_port AS receivePort,
+				       receive_protocol_type AS receiveProtocolType,
+				       receive_ts AS receiveTs,
+				       orderFlag AS orderFlag,
+				       level AS level,
+				       save_time,
+				       comment AS comment,
+                       fba_path as receiveHostFbaPath,
+                       prefix as receiveHostPrefix,
+				       "recieve" as sendProtocolType
+				  FROM txtbl_sys_received
+				 WHERE name LIKE #name#
+				UNION ALL
+				SELECT `id` AS id,
+				       `name` AS name,
+				        status AS status,
+				       `send_host` AS receiveHost,
+				       `send_port` AS receivePort,
+				       `send_protocol_type` AS receiveProtocolType,
+				       `send_ts` AS receiveTs,
+				       `need_auth` AS orderFlag,
+				       `level` AS level,
+				       `save_time`,
+				       `comment`,
+                       `fba_path` as receiveHostFbaPath,
+                        `prefix` as receiveHostPrefix,
+				       "sent" as sendProtocolType
+				  FROM `txtbl_sys_sent`
+				 WHERE name LIKE #name#
+				ORDER BY  name, sendProtocolType, level DESC, save_time DESC
+        
+        
+    </select>
+    
+    <select id="getDomainNames" parameterClass="java.util.HashMap" resultClass="java.lang.String">
+    	SELECT
+    		DISTINCT trim(NAME)
+    	FROM
+    		(SELECT
+    			NAME
+    	     FROM
+    	     	txtbl_sys_received
+    	     WHERE
+    	     	name like #name#
+    	UNION ALL
+    		SELECT
+    			NAME
+    	     FROM
+    	     	txtbl_sys_sent
+    	     WHERE
+    	     	name like #name#
+    	     ) names
+		<isNotNull property="limit">
+			limit #limit#
+		</isNotNull>
+    </select>
+    
+</sqlMap>

@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE sqlMapConfig PUBLIC "-//ibatis.apache.org//DTD SQL Map Config 2.0//EN" "sql-map-config-2.dtd">
+
+<sqlMapConfig>
+
+    <!--properties resource="com/archermind/txtbl/dal/sqlmap/DataBase.properties"/-->
+    
+    <settings 
+      cacheModelsEnabled="true" 
+      enhancementEnabled="false" 
+      lazyLoadingEnabled="true" 
+      errorTracingEnabled="true" 
+      maxRequests="128" 
+      maxSessions="32" 
+      maxTransactions="8" 
+      useStatementNamespaces="true"
+    />
+    
+    <transactionManager type="JDBC">
+        <dataSource type="SIMPLE">
+            <property name="JDBC.Driver" value="com.mysql.jdbc.Driver"/>
+            <property name="JDBC.ConnectionURL" value="jdbc:mysql://192.168.12.201:3306/txtbl"/>
+            <property name="JDBC.Username" value="root"/>
+            <property name="JDBC.Password" value="123456"/>
+        </dataSource>
+    </transactionManager>
+    
+    <sqlMap resource="com/archermind/txtbl/dal/sqlmap/Account.xml"/>
+    <sqlMap resource="com/archermind/txtbl/dal/sqlmap/Contact.xml"/>
+    <sqlMap resource="com/archermind/txtbl/dal/sqlmap/Device.xml"/>
+    <sqlMap resource="com/archermind/txtbl/dal/sqlmap/Global.xml"/>
+    <sqlMap resource="com/archermind/txtbl/dal/sqlmap/MailServer.xml"/>
+    <sqlMap resource="com/archermind/txtbl/dal/sqlmap/User.xml"/>
+    
+    <sqlMap resource="com/archermind/txtbl/dal/sqlmap/SysConfig.xml"/>
+    
+    
+    <!-- add by andy start -->
+    <!-- email body -->
+    <sqlMap resource="com/archermind/txtbl/dal/sqlmap/ReceivedEmailBody.xml"/>
+    <sqlMap resource="com/archermind/txtbl/dal/sqlmap/SentEmailBody.xml"/>
+    <!-- email head -->
+    <sqlMap resource="com/archermind/txtbl/dal/sqlmap/ReceivedEmail.xml"/>
+    <sqlMap resource="com/archermind/txtbl/dal/sqlmap/SentEmail.xml"/>
+    <!-- email attachment -->
+    <sqlMap resource="com/archermind/txtbl/dal/sqlmap/ReceivedAttachment.xml"/>
+    <sqlMap resource="com/archermind/txtbl/dal/sqlmap/SentAttachment.xml"/>
+
+    <!-- add by andy end -->
+    
+</sqlMapConfig>

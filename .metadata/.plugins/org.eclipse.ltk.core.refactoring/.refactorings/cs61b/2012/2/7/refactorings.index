@@ -1,0 +1,40 @@
+1329010674579	Rename type 'SpeadsheetValidator'
+1329014093684	Encapsulate field 'cellValue'
+1329014099758	Encapsulate field 'cellReference'
+1329014127463	Encapsulate field 'arithmeticExrpession'
+1329038772119	Move compilation unit
+1329082935637	Rename local variable 'tks'
+1329083247060	Rename local variable 'tk'
+1329083268649	Rename local variable 'currentCellValue'
+1329083544086	Rename method 'evalrpn'
+1329114304291	Rename local variable 'lab'
+1329278151280	Copy compilation unit
+1329278158985	Move compilation unit
+1329278170316	Copy compilation unit
+1329278182297	Delete element
+1329293412791	Rename local variable 'baseStr'
+1329293423344	Rename local variable 'compareStr'
+1329293438888	Rename local variable 'compareLength'
+1329293465931	Rename local variable 'baseStrCharArray'
+1329293545041	Rename local variable 'src'
+1329293555094	Rename local variable 'dest'
+1329352678355	Rename field 'checkCyclicDependencySet'
+1329352812502	Rename method 'constructRowNumbers'
+1329352883501	Delete element
+1329352929512	Copy compilation unit
+1329352934290	Move compilation unit
+1329353053398	Rename type 'Expression'
+1329353184583	Copy compilation unit
+1329353190199	Move compilation unit
+1329355832201	Move compilation units
+1329361932468	Rename field 'cyclicRefernceException'
+1329451128039	Encapsulate field 'pdtName'
+1329451135530	Encapsulate field 'pdtPrice'
+1329451140844	Encapsulate field 'pdtQty'
+1329451805783	Rename local variable 'haystack'
+1329451814839	Rename local variable 'needle'
+1329453760637	Encapsulate field 'count'
+1329453864554	Rename field 'count'
+1329453874704	Encapsulate field 'pdtPrice'
+1329454025028	Rename local variable 'c'
+1329454036529	Rename field 'pdtType'

@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "sql-map-2.dtd">
+
+<sqlMap namespace="ContentServiceSubscriber">
+    
+    <insert id="addContentServiceSubscriber" parameterClass="com.archermind.txtbl.domain.ContentServiceSubscriber">
+      <![CDATA[
+        insert 
+        into content_svc_subscriber (
+          content_svc_provider_id,
+          uuid, 
+          email,
+          create_date,
+          opt_in_date,
+          opt_out_date)
+        values (
+          #contentServiceProviderId#,
+          #uuid#,
+          #email#,
+          #createDate#,
+          #optInDate#,
+          #optOutDate#)
+      ]]>
+    </insert>
+    
+    <select id="getContentServiceSubscriberByEmail" parameterClass="java.util.HashMap" resultClass="com.archermind.txtbl.domain.ContentServiceSubscriber">
+        select 
+          id as id,
+          content_svc_provider_id as contentServiceProviderId, 
+          uuid as uuid, 
+          email as email,
+          create_date as createDate,
+          opt_in_date as optInDate,
+          opt_out_date as optOutDate
+        from content_svc_subscriber
+          where email = #email# 
+    </select>
+        
+    <select id="getContentServiceSubscriberByUuid" parameterClass="java.util.HashMap" resultClass="com.archermind.txtbl.domain.ContentServiceSubscriber">
+        select 
+          id as id,
+          content_svc_provider_id as contentServiceProviderId, 
+          uuid as uuid, 
+          email as email,
+          create_date as createDate,
+          opt_in_date as optInDate,
+          opt_out_date as optOutDate
+        from content_svc_subscriber
+          where uuid = #uuid#
+    </select>
+        
+    <select id="getAllActiveSubscribers" resultClass="com.archermind.txtbl.domain.ContentServiceSubscriber">
+        select 
+          id as id,
+          content_svc_provider_id as contentServiceProviderId, 
+          uuid as uuid,
+          email as email,
+          create_date as createDate,
+          opt_in_date as optInDate,
+          opt_out_date as optOutDate
+        from content_svc_subscriber 
+    </select>
+        
+    <update id="updateContentServiceSubscriber" parameterClass="com.archermind.txtbl.domain.ContentServiceSubscriber">
+      <![CDATA[
+        update content_svc_subscriber
+        set
+          content_svc_provider_id = #contentServiceProviderId#,
+          uuid = #uuid#,
+          email = #email#,
+          opt_in_date = #optInDate#,
+          opt_out_date = #optOutDate#
+        where 
+          id = #id#
+      ]]>
+    </update>
+
+</sqlMap>
